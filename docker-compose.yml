@@ -1,0 +1,24 @@
+services:
+  db:
+    image: postgres:18
+    container_name: tkt_pg
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      APP_USER_PASSWORD: ${APP_USER_PASSWORD}
+      APP_SYSTEM_PASSWORD: ${APP_SYSTEM_PASSWORD}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - tkt_pgdata:/var/lib/postgresql
+      - ./Database/tkt.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
+      - ./Database/dev-credentials.sh:/docker-entrypoint-initdb.d/02-dev-credentials.sh:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d ticketing_system"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  tkt_pgdata:

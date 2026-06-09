@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="TKT.Api/TKT.Api.csproj" />
+  <Project Path="TKT.Core/TKT.Core.csproj" />
+  <Project Path="TKT.Infrastructure/TKT.Infrastructure.csproj" />
+</Solution>
