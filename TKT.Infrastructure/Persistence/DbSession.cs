@@ -1,30 +1,30 @@
 using System.Data;
 using System.Data.Common;
+using TKT.Infrastructure.Abstractions;
 
 namespace TKT.Infrastructure.Persistence;
 
 public interface IDbSession
 {
-    Task<IDbConnection> GetConnectionAsync(CancellationToken ct = default);
+    Task<IDbConnection> GetConnectionAsync();
     IDbTransaction? Transaction { get; }
 }
 
-public sealed class DbSession : IDbSession, IAsyncDisposable
+public sealed class DbSession(IDbConnectionFactory factory, IRequestContext requestContext)
+    : IDbSession, IAsyncDisposable
 {
-    private readonly IDbConnectionFactory _factory;
+    private readonly IRequestContext _requestContext = requestContext;
     private DbConnection? _connection;
     private DbTransaction? _transaction;
 
-    public DbSession(IDbConnectionFactory factory) => _factory = factory;
-
     public IDbTransaction? Transaction => _transaction;
 
-    public async Task<IDbConnection> GetConnectionAsync(CancellationToken ct = default)
+    public async Task<IDbConnection> GetConnectionAsync()
     {
         if (_connection is null)
         {
-            _connection = (DbConnection)await _factory.CreateOpenConnectionAsync(ct);
-            _transaction = await _connection.BeginTransactionAsync(ct);
+            _connection = (DbConnection)await factory.CreateOpenConnectionAsync(_requestContext.RequestAborted);
+            _transaction = await _connection.BeginTransactionAsync(_requestContext.RequestAborted);
         }
         return _connection;
     }
