@@ -3,6 +3,7 @@ using TKT.Api.Middleware;
 using TKT.Core;
 using TKT.Infrastructure;
 using Scalar.AspNetCore;
+using TKT.Api.EndPoints;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,6 +11,7 @@ builder.Services.AddCore();
 builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddJwtAuthentication(builder.Configuration);
 builder.Services.AddOpenApi();
+builder.Services.AddValidation();
 
 var app = builder.Build();
 
@@ -24,6 +26,9 @@ if (app.Environment.IsDevelopment())
 app.UseAuthentication();
 app.UseAuthorization();
 
+app.UseMiddleware<RequestContextMiddleware>();
 app.UseMiddleware<TransactionMiddleware>();
+
+app.AddAuthRouter();
 
 app.Run();

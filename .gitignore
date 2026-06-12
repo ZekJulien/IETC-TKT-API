@@ -67,6 +67,7 @@ appsettings.*.local.json
 secrets.json
 *.pfx
 *.snk
+CLAUDE.md
 
 # OS
 .DS_Store
