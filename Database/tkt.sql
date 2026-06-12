@@ -1024,9 +1024,12 @@ BEGIN
     END LOOP;
 END $$;
 
--- RLS sur accounts (non tenant-scoped mais protégé via company_members)
-ALTER TABLE accounts ENABLE ROW LEVEL SECURITY;
-ALTER TABLE accounts FORCE ROW LEVEL SECURITY;
+-- accounts : table d'IDENTITÉ GLOBALE (multi-tenant, zéro PII, anonymisable RGPD).
+-- PAS de RLS : un compte se crée et se connecte HORS de tout contexte tenant
+-- (register/login sans company). Mettre une RLS « par appartenance company » ici
+-- bloquerait le signup/login (aucune company au moment de la création).
+-- L'anti-énumération d'emails est gérée en couche applicative (cf. US 1.8),
+-- et l'unicité/visibilité de l'identité ne relève pas de l'isolation tenant.
 
 -- RLS sur user_profiles (données personnelles — accès restreint)
 ALTER TABLE user_profiles ENABLE ROW LEVEL SECURITY;
@@ -1116,20 +1119,10 @@ CREATE POLICY rls_cs_ins ON company_settings FOR INSERT WITH CHECK (company_id =
 CREATE POLICY rls_cs_upd ON company_settings FOR UPDATE USING (company_id = current_company_id());
 CREATE POLICY rls_cs_del ON company_settings FOR DELETE USING (company_id = current_company_id());
 
--- accounts : accès limité aux membres de la même company
--- Un compte ne voit que les comptes qui sont aussi membres de son tenant courant.
-CREATE POLICY rls_accounts_sel ON accounts FOR SELECT USING (
-    EXISTS (
-        SELECT 1 FROM company_members
-        WHERE company_members.account_id = accounts.account_id
-          AND company_members.company_id = current_company_id()
-          AND company_members.is_active = TRUE
-    )
-);
--- UPDATE sur accounts : un compte ne peut modifier que lui-même
-CREATE POLICY rls_accounts_upd ON accounts FOR UPDATE USING (
-    account_id = current_user_id()
-);
+-- accounts : AUCUNE policy RLS (RLS désactivée sur cette table d'identité globale).
+-- Le contrôle « je ne modifie que mon propre compte » est assuré en couche
+-- applicative (use cases TKT.Core), pas par la DB, car le flux d'auth opère
+-- hors contexte tenant/utilisateur. Voir le commentaire sur ENABLE RLS plus haut.
 
 -- user_profiles : un compte ne voit que les profils des membres de son tenant
 CREATE POLICY rls_profiles_sel ON user_profiles FOR SELECT USING (
