@@ -1,6 +1,6 @@
+using TKT.Core.Domain.Errors;
+
 namespace TKT.Core.Domain.Exceptions;
 
-public sealed class InvalidCredentialsException : DomainException
-{
-    public InvalidCredentialsException() : base("Invalid username or password.") { }
-}
+public sealed class InvalidCredentialsException(string? message = null)
+    : DomainException(AuthErrors.InvalidCredentials, message);

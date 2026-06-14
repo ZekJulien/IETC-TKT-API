@@ -1,39 +1,42 @@
-using Dapper;
 using TKT.Infrastructure.Models;
 using TKT.Infrastructure.Persistence;
 using TKT.Infrastructure.Repositories.Abstractions;
 
 namespace TKT.Infrastructure.Repositories;
 
-public class AccountRepository(IDbSession dbSession) : IAccountRepository
+public class AccountRepository(IDbSession db) : IAccountRepository
 {
-    private readonly IDbSession _dbSession = dbSession;
+    private readonly IDbSession _db = db;
 
-    public async Task AddAccount(AccountRow accountRow)
+    public Task AddAccount(AccountRow accountRow)
     {
         const string sql = """
-                  INSERT INTO accounts (account_id,
-                                        email,
-                                        normalized_email,
-                                        password_hash,
-                                        security_stamp)
-                  VALUES (@AccountId,
-                          @Email,
-                          @NormalizedEmail,
-                          @PasswordHash,
-                          @SecurityStamp);
-                  """;
-        var conn = await _dbSession.GetConnectionAsync();
-        await conn.ExecuteAsync(sql, accountRow);
+                           INSERT INTO accounts (account_id, email, normalized_email, password_hash, security_stamp)
+                           VALUES (@AccountId, @Email, @NormalizedEmail, @PasswordHash, @SecurityStamp);
+                           """;
+        return _db.ExecuteAsync(sql, accountRow);
     }
 
-    public async Task<bool> ExistByEmailAsync(string normalizedEmail)
+    public Task<bool> ExistByEmailAsync(string normalizedEmail)
+    {
+        const string sql = "SELECT EXISTS(SELECT 1 FROM accounts WHERE normalized_email = @NormalizedEmail)";
+        return _db.ExecuteScalarAsync<bool>(sql, new { NormalizedEmail = normalizedEmail });
+    }
+
+    public Task<AccountRow?> GetByIdAsync(Guid accountId)
     {
         const string sql = """
-                            SELECT EXISTS(SELECT 1 FROM accounts
-                            WHERE normalized_email = @NormalizedEmail)
+                           SELECT account_id, email, normalized_email, password_hash,
+                                  security_stamp, email_confirmed, is_active
+                           FROM accounts
+                           WHERE account_id = @AccountId;
                            """;
-        var conn = await _dbSession.GetConnectionAsync();
-        return await conn.ExecuteScalarAsync<bool>(sql, new { NormalizedEmail = normalizedEmail });
+        return _db.QuerySingleOrDefaultAsync<AccountRow>(sql, new { AccountId = accountId });
+    }
+
+    public Task SetEmailConfirmedAsync(Guid accountId)
+    {
+        const string sql = "UPDATE accounts SET email_confirmed = TRUE WHERE account_id = @AccountId;";
+        return _db.ExecuteAsync(sql, new { AccountId = accountId });
     }
 }

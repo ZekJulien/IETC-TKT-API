@@ -8,16 +8,18 @@ public sealed class TransactionMiddleware
 
     public TransactionMiddleware(RequestDelegate next) => _next = next;
 
-    public async Task InvokeAsync(HttpContext context, DbSession session)
+    public async Task InvokeAsync(HttpContext context, DbSession session, SystemDbSession systemSession)
     {
         try
         {
             await _next(context);
             await session.CommitAsync();
+            await systemSession.CommitAsync();
         }
         catch
         {
             await session.RollbackAsync();
+            await systemSession.RollbackAsync();
             throw;
         }
     }

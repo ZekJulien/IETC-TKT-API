@@ -7,4 +7,6 @@ public class Account
     public string NormalizedEmail { get; set; } = string.Empty;
     public string PasswordHash { get; set; } = string.Empty;
     public string? SecurityStamp { get; set; }
+    public bool EmailConfirmed { get; set; }
+    public bool IsActive { get; set; } = true;
 }

@@ -1,3 +1,4 @@
+using TKT.Core.UseCases.Auth.ConfirmEmail;
 using TKT.Core.UseCases.Auth.Register;
 using TKT.Api.Contracts.Auth;
 using TKT.Api.Mappers;
@@ -8,14 +9,20 @@ public static class AuthRouter
 {
     public static WebApplication AddAuthRouter(this WebApplication app)
     {
-        var group = app.MapGroup("api/auth").WithTags("auth");
+        var group = app.MapGroup("api/auth").WithTags("auth").AllowAnonymous();
 
         group.MapPost("register", async (RegisterRequest req, IRegisterAccountUseCase useCase) =>
         {
             await useCase.ExecuteAsync(req.ToInput());
             return Results.Created();
         });
-        
+
+        group.MapGet("confirm-email", async (string token, IConfirmEmailUseCase useCase) =>
+        {
+            var result = await useCase.ExecuteAsync(new ConfirmEmailInput(token));
+            return Results.Ok(result.ToResponse());
+        });
+
         return app;
     }
 }

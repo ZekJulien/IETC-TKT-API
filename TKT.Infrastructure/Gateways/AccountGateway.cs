@@ -9,13 +9,15 @@ public class AccountGateway(IAccountRepository accountRepository) : IAccountGate
 {
     private readonly IAccountRepository _accountRepository = accountRepository;
 
-    public Task AddAccount(Account account)
+    public Task AddAccount(Account account) => _accountRepository.AddAccount(account.ToRow());
+
+    public Task<bool> ExistByEmailAsync(string normalizedEmail) => _accountRepository.ExistByEmailAsync(normalizedEmail);
+
+    public async Task<Account?> GetByIdAsync(Guid accountId)
     {
-        return _accountRepository.AddAccount(account.ToRow());
+        var row = await _accountRepository.GetByIdAsync(accountId);
+        return row?.ToDomain();
     }
 
-    public Task<bool> ExistByEmailAsync(string normalizedEmail)
-    {
-        return _accountRepository.ExistByEmailAsync(normalizedEmail);
-    }
+    public Task SetEmailConfirmedAsync(Guid accountId) => _accountRepository.SetEmailConfirmedAsync(accountId);
 }

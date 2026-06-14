@@ -12,6 +12,10 @@ public static class AccountMapper
             AccountId = account.AccountId,
             Email = account.Email,
             NormalizedEmail = account.NormalizedEmail,
+            PasswordHash = account.PasswordHash,
+            SecurityStamp = account.SecurityStamp,
+            EmailConfirmed = account.EmailConfirmed,
+            IsActive = account.IsActive,
         };
     }
 
@@ -26,5 +30,4 @@ public static class AccountMapper
             SecurityStamp = account.SecurityStamp,
         };
     }
-
 }
