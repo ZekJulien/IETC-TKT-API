@@ -1,6 +1,6 @@
 namespace TKT.Core.Domain.Exceptions;
 
-public abstract class DomainException : Exception
+public abstract class DomainException(string code, string? message = null) : Exception(message ?? code)
 {
-    protected DomainException(string message) : base(message) { }
+    public string Code { get; } = code;
 }

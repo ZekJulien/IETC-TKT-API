@@ -1,6 +1,7 @@
 using System.Security.Claims;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.IdentityModel.Tokens;
 
 namespace TKT.Api.Extensions;
@@ -29,6 +30,9 @@ public static class AuthenticationExtensions
 
         services.AddAuthorization(options =>
         {
+            options.FallbackPolicy = new AuthorizationPolicyBuilder()
+                .RequireAuthenticatedUser()
+                .Build();
             options.AddPolicy("AdminOnly", policy => policy.RequireRole("Admin"));
         });
 

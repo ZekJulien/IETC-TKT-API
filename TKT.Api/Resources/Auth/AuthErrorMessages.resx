@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="auth.email.invalid" xml:space="preserve">
+    <value>Invalid email.</value>
+  </data>
+  <data name="auth.email.already_used" xml:space="preserve">
+    <value>This email is already in use.</value>
+  </data>
+  <data name="auth.email.already_confirmed" xml:space="preserve">
+    <value>This email is already confirmed.</value>
+  </data>
+  <data name="auth.password.weak" xml:space="preserve">
+    <value>The password must be at least 8 characters long, with 1 uppercase letter and 1 digit.</value>
+  </data>
+  <data name="auth.password.mismatch" xml:space="preserve">
+    <value>Passwords do not match.</value>
+  </data>
+  <data name="auth.confirmation.invalid" xml:space="preserve">
+    <value>Invalid or expired confirmation link.</value>
+  </data>
+  <data name="auth.account.disabled" xml:space="preserve">
+    <value>This account is disabled.</value>
+  </data>
+  <data name="auth.invalid_credentials" xml:space="preserve">
+    <value>Invalid credentials.</value>
+  </data>
+</root>
