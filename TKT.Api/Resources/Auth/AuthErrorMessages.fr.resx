@@ -33,7 +33,13 @@
   <data name="auth.account.disabled" xml:space="preserve">
     <value>Ce compte est désactivé.</value>
   </data>
+  <data name="auth.account.locked" xml:space="preserve">
+    <value>Compte temporairement verrouillé suite à trop de tentatives. Réessayez dans quelques minutes.</value>
+  </data>
+  <data name="auth.email.not_confirmed" xml:space="preserve">
+    <value>Veuillez confirmer votre email.</value>
+  </data>
   <data name="auth.invalid_credentials" xml:space="preserve">
-    <value>Identifiants invalides.</value>
+    <value>Email ou mot de passe incorrect.</value>
   </data>
 </root>

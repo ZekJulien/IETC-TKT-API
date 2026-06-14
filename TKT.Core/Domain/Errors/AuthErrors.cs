@@ -9,5 +9,7 @@ public static class AuthErrors
     public const string PasswordMismatch = "auth.password.mismatch";
     public const string ConfirmationInvalid = "auth.confirmation.invalid";
     public const string AccountDisabled = "auth.account.disabled";
+    public const string AccountLocked = "auth.account.locked";
+    public const string EmailNotConfirmed = "auth.email.not_confirmed";
     public const string InvalidCredentials = "auth.invalid_credentials";
 }

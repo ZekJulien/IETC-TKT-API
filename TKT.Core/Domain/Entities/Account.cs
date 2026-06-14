@@ -9,4 +9,6 @@ public class Account
     public string? SecurityStamp { get; set; }
     public bool EmailConfirmed { get; set; }
     public bool IsActive { get; set; } = true;
+    public int AccessFailedCount { get; set; }
+    public DateTimeOffset? LockoutEnd { get; set; }
 }

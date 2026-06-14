@@ -16,6 +16,8 @@ public static class AccountMapper
             SecurityStamp = account.SecurityStamp,
             EmailConfirmed = account.EmailConfirmed,
             IsActive = account.IsActive,
+            AccessFailedCount = account.AccessFailedCount,
+            LockoutEnd = account.LockoutEnd,
         };
     }
 

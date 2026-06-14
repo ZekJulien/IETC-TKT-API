@@ -33,7 +33,13 @@
   <data name="auth.account.disabled" xml:space="preserve">
     <value>This account is disabled.</value>
   </data>
+  <data name="auth.account.locked" xml:space="preserve">
+    <value>Account temporarily locked due to too many failed attempts. Please try again later.</value>
+  </data>
+  <data name="auth.email.not_confirmed" xml:space="preserve">
+    <value>Please confirm your email address.</value>
+  </data>
   <data name="auth.invalid_credentials" xml:space="preserve">
-    <value>Invalid credentials.</value>
+    <value>Incorrect email or password.</value>
   </data>
 </root>

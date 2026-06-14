@@ -34,9 +34,30 @@ public class AccountRepository(IDbSession db) : IAccountRepository
         return _db.QuerySingleOrDefaultAsync<AccountRow>(sql, new { AccountId = accountId });
     }
 
+    public Task<AccountRow?> GetByNormalizedEmailAsync(string normalizedEmail)
+    {
+        const string sql = """
+                           SELECT account_id, email, normalized_email, password_hash, security_stamp,
+                                  email_confirmed, is_active, access_failed_count, lockout_end
+                           FROM accounts
+                           WHERE normalized_email = @NormalizedEmail;
+                           """;
+        return _db.QuerySingleOrDefaultAsync<AccountRow>(sql, new { NormalizedEmail = normalizedEmail });
+    }
+
     public Task SetEmailConfirmedAsync(Guid accountId)
     {
         const string sql = "UPDATE accounts SET email_confirmed = TRUE WHERE account_id = @AccountId;";
+        return _db.ExecuteAsync(sql, new { AccountId = accountId });
+    }
+
+    public Task ResetLockoutAsync(Guid accountId)
+    {
+        const string sql = """
+                           UPDATE accounts
+                           SET access_failed_count = 0, lockout_end = NULL
+                           WHERE account_id = @AccountId;
+                           """;
         return _db.ExecuteAsync(sql, new { AccountId = accountId });
     }
 }
