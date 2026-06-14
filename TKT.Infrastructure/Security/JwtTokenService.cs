@@ -66,13 +66,20 @@ public sealed class JwtTokenService : ITokenService
         }
     }
 
-    public string GenerateAccessToken(Guid accountId, string email)
-        => CreateToken(_audience, _accessTokenLifetime,
-        [
-            new Claim(JwtRegisteredClaimNames.Sub, accountId.ToString()),
-            new Claim(JwtRegisteredClaimNames.Email, email),
-            new Claim(AppClaims.Purpose, TokenPurpose.Access.ToString()),
-        ]);
+    public string GenerateAccessToken(Guid accountId, string email, Guid? companyId = null, string? role = null)
+    {
+        var claims = new List<Claim>
+        {
+            new(JwtRegisteredClaimNames.Sub, accountId.ToString()),
+            new(JwtRegisteredClaimNames.Email, email),
+            new(AppClaims.Purpose, TokenPurpose.Access.ToString()),
+        };
+
+        if (companyId is { } id) claims.Add(new Claim(AppClaims.CompanyId, id.ToString()));
+        if (!string.IsNullOrEmpty(role)) claims.Add(new Claim(ClaimTypes.Role, role));
+
+        return CreateToken(_audience, _accessTokenLifetime, claims);
+    }
 
     private string EmailConfirmationAudience => $"{_issuer}.{TokenPurpose.EmailConfirmation}";
 

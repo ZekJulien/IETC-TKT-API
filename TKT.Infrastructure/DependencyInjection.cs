@@ -33,12 +33,19 @@ public static class DependencyInjection
         services.AddSingleton<IPasswordHasher, Argon2PasswordHasher>();
         services.AddSingleton<IEmailSender, ConsoleEmailSender>();
         services.AddSingleton<ITokenService, JwtTokenService>();
+        services.AddSingleton<IRefreshTokenService, RefreshTokenService>();
 
         services.AddScoped<IAccountGateway, AccountGateway>();
         services.AddScoped<IAccountRepository, AccountRepository>();
+        services.AddScoped<IAccountLockoutRepository, AccountLockoutRepository>();
+
+        services.AddScoped<IRefreshTokenGateway, RefreshTokenGateway>();
+        services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
 
         services.AddScoped<IMembershipGateway, MembershipGateway>();
         services.AddScoped<IMembershipReadRepository, MembershipReadRepository>();
+
+        services.AddScoped<ISessionContextGateway, SessionContextGateway>();
 
         services.AddScoped<ICompanyProvisioningGateway, CompanyProvisioningGateway>();
         services.AddScoped<ICompanyProvisioningRepository, CompanyProvisioningRepository>();

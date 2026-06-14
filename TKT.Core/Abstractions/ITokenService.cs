@@ -8,5 +8,5 @@ public interface ITokenService
 
     EmailConfirmationToken ValidateEmailConfirmationToken(string token);
 
-    string GenerateAccessToken(Guid accountId, string email);
+    string GenerateAccessToken(Guid accountId, string email, Guid? companyId = null, string? role = null);
 }
