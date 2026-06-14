@@ -1109,6 +1109,12 @@ CREATE POLICY rls_sub_upd ON company_subscriptions FOR UPDATE USING (company_id 
 
 -- company_members : CRUD restreint
 CREATE POLICY rls_cm_sel ON company_members FOR SELECT USING (company_id = current_company_id());
+-- Lecture « plan identité » (US 1.2) : un compte voit SES propres appartenances
+-- hors contexte tenant. Indispensable au /me et au login multi-tenant (« dans
+-- quelles companies suis-je ? »), requête prévue par idx_cm_account_companies.
+-- Policy permissive ⇒ OR avec rls_cm_sel : la DB reste le filet (account_id =
+-- current_user_id()), aucun bypass app_system sur ce hot path. NB : SELECT only.
+CREATE POLICY rls_cm_sel_self ON company_members FOR SELECT USING (account_id = current_user_id());
 CREATE POLICY rls_cm_ins ON company_members FOR INSERT WITH CHECK (company_id = current_company_id());
 CREATE POLICY rls_cm_upd ON company_members FOR UPDATE USING (company_id = current_company_id());
 CREATE POLICY rls_cm_del ON company_members FOR DELETE USING (company_id = current_company_id());
