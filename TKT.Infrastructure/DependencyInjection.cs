@@ -41,6 +41,7 @@ public static class DependencyInjection
 
         services.AddScoped<IRefreshTokenGateway, RefreshTokenGateway>();
         services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
+        services.AddScoped<IRefreshTokenReuseRepository, RefreshTokenReuseRepository>();
 
         services.AddScoped<IMembershipGateway, MembershipGateway>();
         services.AddScoped<IMembershipReadRepository, MembershipReadRepository>();

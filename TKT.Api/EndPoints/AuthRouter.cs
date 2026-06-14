@@ -1,5 +1,6 @@
 using TKT.Core.UseCases.Auth.ConfirmEmail;
 using TKT.Core.UseCases.Auth.Login;
+using TKT.Core.UseCases.Auth.Refresh;
 using TKT.Core.UseCases.Auth.Register;
 using TKT.Api.Contracts.Auth;
 using TKT.Api.Mappers;
@@ -25,6 +26,12 @@ public static class AuthRouter
         });
 
         group.MapPost("login", async (LoginRequest req, ILoginUseCase useCase) =>
+        {
+            var result = await useCase.ExecuteAsync(req.ToInput());
+            return Results.Ok(result.ToResponse());
+        });
+
+        group.MapPost("refresh", async (RefreshRequest req, IRefreshUseCase useCase) =>
         {
             var result = await useCase.ExecuteAsync(req.ToInput());
             return Results.Ok(result.ToResponse());

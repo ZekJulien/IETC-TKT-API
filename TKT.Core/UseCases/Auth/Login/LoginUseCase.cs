@@ -4,15 +4,15 @@ using TKT.Core.Domain.Errors;
 using TKT.Core.Domain.Exceptions;
 using TKT.Core.Domain.ValueObjects;
 using TKT.Core.IGateways;
+using TKT.Core.Services;
 
 namespace TKT.Core.UseCases.Auth.Login;
 
 public sealed class LoginUseCase(
     IAccountGateway accountGateway,
-    IMembershipGateway membershipGateway,
     ISessionContextGateway sessionContextGateway,
     IPasswordHasher passwordHasher,
-    ITokenService tokenService,
+    IAccessTokenIssuer accessTokenIssuer,
     IRefreshTokenService refreshTokenService,
     IRefreshTokenGateway refreshTokenGateway) : ILoginUseCase
 {
@@ -20,10 +20,9 @@ public sealed class LoginUseCase(
     private static readonly TimeSpan LockoutDuration = TimeSpan.FromMinutes(15);
 
     private readonly IAccountGateway _accountGateway = accountGateway;
-    private readonly IMembershipGateway _membershipGateway = membershipGateway;
     private readonly ISessionContextGateway _sessionContextGateway = sessionContextGateway;
     private readonly IPasswordHasher _passwordHasher = passwordHasher;
-    private readonly ITokenService _tokenService = tokenService;
+    private readonly IAccessTokenIssuer _accessTokenIssuer = accessTokenIssuer;
     private readonly IRefreshTokenService _refreshTokenService = refreshTokenService;
     private readonly IRefreshTokenGateway _refreshTokenGateway = refreshTokenGateway;
 
@@ -47,20 +46,17 @@ public sealed class LoginUseCase(
 
         await _sessionContextGateway.SetCurrentUserAsync(account.AccountId);
 
-        var memberships = await _membershipGateway.GetActiveForAccountAsync(account.AccountId);
-        var activeTenant = memberships.Count == 1 ? memberships[0] : null;
+        var accessToken = await _accessTokenIssuer.IssueForAsync(account.AccountId, account.Email);
 
-        var accessToken = _tokenService.GenerateAccessToken(
-            account.AccountId, account.Email, activeTenant?.CompanyId, activeTenant?.Role);
-
-        var refresh = _refreshTokenService.Generate();
+        var refresh = _refreshTokenService.Generate(account.AccountId);
         await _refreshTokenGateway.AddAsync(new RefreshToken
         {
             TokenId = Guid.CreateVersion7(),
             AccountId = account.AccountId,
+            FamilyId = Guid.CreateVersion7(),
             TokenHash = refresh.TokenHash,
             ExpiresAt = refresh.ExpiresAt,
-            AbsoluteExpiresAt = refresh.ExpiresAt,
+            AbsoluteExpiresAt = refresh.AbsoluteExpiresAt,
         });
 
         await _accountGateway.ResetLockoutAsync(account.AccountId);
