@@ -1,4 +1,5 @@
 using TKT.Core.Domain.Entities;
+using TKT.Core.IGateways;
 using TKT.Infrastructure.Models;
 
 namespace TKT.Infrastructure.Mappers;
@@ -13,6 +14,7 @@ public static class CompanyMemberMapper
             CompanyId = member.CompanyId,
             AccountId = member.AccountId,
             Role = member.Role,
+            IsActive = member.IsActive,
             InvitedBy = member.InvitedBy,
             Department = member.Department,
             JobTitle = member.JobTitle,
@@ -28,10 +30,14 @@ public static class CompanyMemberMapper
             CompanyId = row.CompanyId,
             AccountId = row.AccountId,
             Role = row.Role,
+            IsActive = row.IsActive,
             InvitedBy = row.InvitedBy,
             Department = row.Department,
             JobTitle = row.JobTitle,
             JoinedAt = row.JoinedAt,
         };
     }
+
+    public static MemberSummary ToSummary(this MemberSummaryRow row)
+        => new(row.AccountId, row.Email, row.DisplayName, row.Role, row.IsActive, row.JoinedAt);
 }
