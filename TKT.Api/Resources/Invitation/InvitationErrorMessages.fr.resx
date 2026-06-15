@@ -21,4 +21,16 @@
   <data name="invitation.already_member" xml:space="preserve">
     <value>Vous êtes déjà membre de cette entreprise.</value>
   </data>
+  <data name="invitation.already_invited" xml:space="preserve">
+    <value>Une invitation active existe déjà pour cet email.</value>
+  </data>
+  <data name="invitation.role_invalid" xml:space="preserve">
+    <value>Rôle invalide. Rôles autorisés : admin, agent, member.</value>
+  </data>
+  <data name="invitation.quota_exceeded" xml:space="preserve">
+    <value>Limite de membres atteinte pour le plan actuel.</value>
+  </data>
+  <data name="invitation.forbidden" xml:space="preserve">
+    <value>Vous n'êtes pas autorisé à gérer les membres de cette entreprise.</value>
+  </data>
 </root>

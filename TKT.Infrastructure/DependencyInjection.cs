@@ -57,6 +57,18 @@ public static class DependencyInjection
         services.AddScoped<IInvitationGateway, InvitationGateway>();
         services.AddScoped<IInvitationLookupRepository, InvitationLookupRepository>();
 
+        services.AddScoped<ICompanyMembersGateway, CompanyMembersGateway>();
+        services.AddScoped<ICompanyMembersRepository, CompanyMembersRepository>();
+
+        services.AddScoped<ICompanyInvitationGateway, CompanyInvitationGateway>();
+        services.AddScoped<ICompanyInvitationRepository, CompanyInvitationRepository>();
+
+        services.AddScoped<ICompanySubscriptionGateway, CompanySubscriptionGateway>();
+        services.AddScoped<ICompanySubscriptionRepository, CompanySubscriptionRepository>();
+
+        services.AddScoped<IEmailQueueGateway, EmailQueueGateway>();
+        services.AddScoped<IEmailQueueRepository, EmailQueueRepository>();
+
         return services;
     }
 }

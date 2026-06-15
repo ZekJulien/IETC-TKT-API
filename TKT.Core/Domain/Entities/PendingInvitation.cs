@@ -11,4 +11,5 @@ public class PendingInvitation
     public string? Department { get; set; }
     public string? JobTitle { get; set; }
     public Guid InvitedBy { get; set; }
+    public string InvitationCode { get; set; } = string.Empty;
 }
