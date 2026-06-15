@@ -6,11 +6,13 @@ using TKT.Core.IGateways;
 
 namespace TKT.Core.UseCases.Companies.ListMembers;
 
-public sealed class ListMembersUseCase(ICompanyMembersGateway members) : IListMembersUseCase
+public sealed class ListMembersUseCase(ICompanyMembersGateway members, ICompanySubscriptionGateway subscriptions)
+    : IListMembersUseCase
 {
     private readonly ICompanyMembersGateway _members = members;
+    private readonly ICompanySubscriptionGateway _subscriptions = subscriptions;
 
-    public async Task<PagedResult<MemberSummary>> ExecuteAsync(ListMembersInput input)
+    public async Task<ListMembersResult> ExecuteAsync(ListMembersInput input)
     {
         if (input.CallerCompanyId != input.CompanyId)
             throw new ForbiddenException(CompanyErrors.Forbidden);
@@ -20,6 +22,10 @@ public sealed class ListMembersUseCase(ICompanyMembersGateway members) : IListMe
             throw new ForbiddenException(CompanyErrors.Forbidden);
 
         var pagination = Pagination.Create(input.Page, input.PageSize);
-        return await _members.ListAsync(input.CompanyId, pagination.Page, pagination.PageSize, input.Role, input.IsActive);
+        var page = await _members.ListAsync(input.CompanyId, pagination.Page, pagination.PageSize, input.Role, input.IsActive);
+        var activeMembers = await _members.CountActiveMembersAsync(input.CompanyId);
+        var maxUsers = await _subscriptions.GetMaxUsersAsync(input.CompanyId);
+
+        return new ListMembersResult(page, activeMembers, maxUsers);
     }
 }

@@ -44,7 +44,7 @@ public sealed class RefreshUseCase(
             ?? throw new InvalidCredentialsException();
         if (!account.IsActive) throw new ForbiddenException(AuthErrors.AccountDisabled);
 
-        var generated = _refreshTokenService.Generate(stored.AccountId);
+        var generated = _refreshTokenService.Generate(stored.AccountId, parts.CompanyId);
         var rotatedExpiresAt = generated.ExpiresAt < stored.AbsoluteExpiresAt
             ? generated.ExpiresAt
             : stored.AbsoluteExpiresAt;
@@ -61,7 +61,9 @@ public sealed class RefreshUseCase(
         });
         await _refreshTokenGateway.MarkRotatedAsync(stored.TokenId, newTokenId);
 
-        var accessToken = await _accessTokenIssuer.IssueForAsync(account.AccountId, account.Email);
+        var accessToken = parts.CompanyId is { } companyId
+            ? await _accessTokenIssuer.IssueForCompanyAsync(account.AccountId, account.Email, companyId)
+            : await _accessTokenIssuer.IssueForAsync(account.AccountId, account.Email);
 
         return new RefreshResult(accessToken, generated.Token);
     }

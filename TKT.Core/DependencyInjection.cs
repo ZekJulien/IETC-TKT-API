@@ -1,9 +1,11 @@
 using Microsoft.Extensions.DependencyInjection;
 using TKT.Core.UseCases.Identity.GetMe;
+using TKT.Core.UseCases.Identity.ListMyCompanies;
 using TKT.Core.UseCases.Auth.ConfirmEmail;
 using TKT.Core.UseCases.Auth.Login;
 using TKT.Core.UseCases.Auth.Refresh;
 using TKT.Core.UseCases.Auth.Register;
+using TKT.Core.UseCases.Auth.SwitchTenant;
 using TKT.Core.Services;
 using TKT.Core.UseCases.Onboarding.CreateCompany;
 using TKT.Core.UseCases.Onboarding.JoinInvitation;
@@ -22,6 +24,7 @@ public static class DependencyInjection
         services.AddScoped<IConfirmEmailUseCase, ConfirmEmailUseCase>();
         services.AddScoped<ILoginUseCase, LoginUseCase>();
         services.AddScoped<IRefreshUseCase, RefreshUseCase>();
+        services.AddScoped<ISwitchTenantUseCase, SwitchTenantUseCase>();
         services.AddScoped<IAccessTokenIssuer, AccessTokenIssuer>();
         services.AddScoped<ICreateCompanyUseCase, CreateCompanyUseCase>();
         services.AddScoped<IJoinInvitationUseCase, JoinInvitationUseCase>();
@@ -30,6 +33,7 @@ public static class DependencyInjection
         services.AddScoped<IChangeMemberRoleUseCase, ChangeMemberRoleUseCase>();
         services.AddScoped<ISetMemberActiveUseCase, SetMemberActiveUseCase>();
         services.AddScoped<IGetMeUseCase, GetMeUseCase>();
+        services.AddScoped<IListMyCompaniesUseCase, ListMyCompaniesUseCase>();
 
         return services;
     }

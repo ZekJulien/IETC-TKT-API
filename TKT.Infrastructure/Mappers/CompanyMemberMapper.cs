@@ -40,4 +40,7 @@ public static class CompanyMemberMapper
 
     public static MemberSummary ToSummary(this MemberSummaryRow row)
         => new(row.AccountId, row.Email, row.DisplayName, row.Role, row.IsActive, row.JoinedAt);
+
+    public static MemberCompany ToMemberCompany(this MemberCompanyRow row)
+        => new(row.CompanyId, row.CompanyName, row.CompanySlug, row.LogoUrl, row.Role, row.IsActive);
 }

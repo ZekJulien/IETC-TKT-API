@@ -1,9 +1,8 @@
-using TKT.Api.Contracts.Common;
 using TKT.Api.Contracts.Companies;
-using TKT.Core.Common;
 using TKT.Core.IGateways;
 using TKT.Core.UseCases.Companies.ChangeMemberRole;
 using TKT.Core.UseCases.Companies.InviteMember;
+using TKT.Core.UseCases.Companies.ListMembers;
 using TKT.Core.UseCases.Companies.SetMemberActive;
 
 namespace TKT.Api.Mappers;
@@ -31,6 +30,12 @@ public static class CompanyMembersMapper
     public static MemberResponse ToResponse(this MemberSummary member)
         => new(member.AccountId, member.Email, member.DisplayName, member.Role, member.IsActive, member.JoinedAt);
 
-    public static PagedResponse<MemberResponse> ToResponse(this PagedResult<MemberSummary> page)
-        => new(page.Items.Select(m => m.ToResponse()).ToList(), page.Total, page.Page, page.PageSize);
+    public static MemberListResponse ToResponse(this ListMembersResult result)
+        => new(
+            result.Members.Items.Select(m => m.ToResponse()).ToList(),
+            result.Members.Total,
+            result.Members.Page,
+            result.Members.PageSize,
+            result.ActiveMembers,
+            result.MaxUsers);
 }

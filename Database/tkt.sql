@@ -1098,6 +1098,12 @@ CREATE POLICY rls_tickets_upd ON tickets FOR UPDATE USING (company_id = current_
 -- companies : SELECT + UPDATE seulement (soft delete enforced, pas de DELETE policy)
 CREATE POLICY rls_companies_sel ON companies FOR SELECT USING (company_id = current_company_id());
 CREATE POLICY rls_companies_upd ON companies FOR UPDATE USING (company_id = current_company_id());
+-- US 2.5 : un membre voit les sociétés dont il est membre, même sans tenant actif
+-- (écran de sélection multi-tenant : current_company_id() est NULL avant le choix).
+-- Policies SELECT permissives combinées en OR → n'affaiblit pas l'isolation tenant.
+CREATE POLICY rls_companies_sel_self ON companies FOR SELECT USING (
+    company_id IN (SELECT company_id FROM company_members WHERE account_id = current_user_id())
+);
 
 -- audit_logs : SELECT + INSERT seulement (append-only)
 CREATE POLICY rls_audit_logs_sel ON audit_logs FOR SELECT USING (company_id = current_company_id());
