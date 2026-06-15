@@ -3,6 +3,7 @@ using TKT.Core.UseCases.Auth.ConfirmEmail;
 using TKT.Core.UseCases.Auth.Login;
 using TKT.Core.UseCases.Auth.Refresh;
 using TKT.Core.UseCases.Auth.Register;
+using TKT.Core.UseCases.Auth.SwitchTenant;
 
 namespace TKT.Api.Mappers;
 
@@ -17,6 +18,9 @@ public static class AuthMapper
     public static RefreshInput ToInput(this RefreshRequest request)
         => new(request.RefreshToken);
 
+    public static SwitchTenantInput ToInput(this SwitchTenantRequest request, Guid accountId, string email)
+        => new(accountId, email, request.CompanyId);
+
     public static ConfirmEmailResponse ToResponse(this ConfirmEmailResult result)
         => new(result.AccessToken);
 
@@ -24,5 +28,8 @@ public static class AuthMapper
         => new(result.AccessToken, result.RefreshToken);
 
     public static RefreshResponse ToResponse(this RefreshResult result)
+        => new(result.AccessToken, result.RefreshToken);
+
+    public static SwitchTenantResponse ToResponse(this SwitchTenantResult result)
         => new(result.AccessToken, result.RefreshToken);
 }

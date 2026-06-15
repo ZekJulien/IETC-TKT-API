@@ -14,4 +14,10 @@ public class MembershipGateway(IMembershipReadRepository repository) : IMembersh
         var rows = await _repository.GetActiveForAccountAsync(accountId);
         return rows.Select(r => r.ToDomain()).ToList();
     }
+
+    public async Task<IReadOnlyList<MemberCompany>> GetCompaniesForAccountAsync(Guid accountId)
+    {
+        var rows = await _repository.GetCompaniesForAccountAsync(accountId);
+        return rows.Select(r => r.ToMemberCompany()).ToList();
+    }
 }

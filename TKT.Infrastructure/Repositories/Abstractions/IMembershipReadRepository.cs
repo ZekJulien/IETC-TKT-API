@@ -5,4 +5,6 @@ namespace TKT.Infrastructure.Repositories.Abstractions;
 public interface IMembershipReadRepository
 {
     Task<IReadOnlyList<CompanyMemberRow>> GetActiveForAccountAsync(Guid accountId);
+
+    Task<IReadOnlyList<MemberCompanyRow>> GetCompaniesForAccountAsync(Guid accountId);
 }

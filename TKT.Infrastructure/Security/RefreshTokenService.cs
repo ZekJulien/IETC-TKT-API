@@ -18,20 +18,30 @@ public sealed class RefreshTokenService : IRefreshTokenService
         _absoluteLifetime = TimeSpan.FromDays(double.Parse(jwt["RefreshTokenAbsoluteDays"] ?? "90"));
     }
 
-    public GeneratedRefreshToken Generate(Guid accountId)
+    public GeneratedRefreshToken Generate(Guid accountId, Guid? companyId = null)
     {
         var secret = Base64Url.EncodeToString(RandomNumberGenerator.GetBytes(32));
-        var token = $"{accountId:N}.{secret}";
+        var token = companyId is { } company
+            ? $"{accountId:N}.{company:N}.{secret}"
+            : $"{accountId:N}.{secret}";
         var now = DateTimeOffset.UtcNow;
         return new GeneratedRefreshToken(token, Hash(token), now.Add(_slidingLifetime), now.Add(_absoluteLifetime));
     }
 
     public RefreshTokenParts? Parse(string token)
     {
-        var separator = token.IndexOf('.');
-        if (separator <= 0) return null;
-        if (!Guid.TryParseExact(token[..separator], "N", out var accountId)) return null;
-        return new RefreshTokenParts(accountId, Hash(token));
+        var segments = token.Split('.');
+        if (segments.Length is not (2 or 3)) return null;
+        if (!Guid.TryParseExact(segments[0], "N", out var accountId)) return null;
+
+        Guid? companyId = null;
+        if (segments.Length == 3)
+        {
+            if (!Guid.TryParseExact(segments[1], "N", out var company)) return null;
+            companyId = company;
+        }
+
+        return new RefreshTokenParts(accountId, Hash(token), companyId);
     }
 
     private static string Hash(string token)
