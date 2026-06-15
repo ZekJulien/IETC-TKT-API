@@ -15,7 +15,7 @@ public static class OnboardingRouter
 
         group.MapPost("create-company", async (CreateCompanyRequest req, ClaimsPrincipal user, ICreateCompanyUseCase useCase) =>
         {
-            var result = await useCase.ExecuteAsync(req.ToInput(user.GetAccountId()));
+            var result = await useCase.ExecuteAsync(req.ToInput(user.GetAccountId(), user.GetEmail()));
             return Results.Ok(result.ToResponse());
         });
 

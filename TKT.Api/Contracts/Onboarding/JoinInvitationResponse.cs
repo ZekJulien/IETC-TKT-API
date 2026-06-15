@@ -1,3 +1,7 @@
 namespace TKT.Api.Contracts.Onboarding;
 
-public sealed record JoinInvitationResponse(Guid CompanyId, string Role);
+public sealed record JoinInvitationResponse(
+    Guid CompanyId,
+    string Role,
+    string AccessToken,
+    string RefreshToken);
