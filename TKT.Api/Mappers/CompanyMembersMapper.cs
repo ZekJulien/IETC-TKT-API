@@ -28,7 +28,7 @@ public static class CompanyMembersMapper
         => new(result.AccountId, result.IsActive);
 
     public static MemberResponse ToResponse(this MemberSummary member)
-        => new(member.AccountId, member.Email, member.DisplayName, member.Role, member.IsActive, member.JoinedAt);
+        => new(member.AccountId, member.InvitationId, member.Email, member.DisplayName, member.Role, member.Status, member.JoinedAt);
 
     public static MemberListResponse ToResponse(this ListMembersResult result)
         => new(
@@ -37,5 +37,6 @@ public static class CompanyMembersMapper
             result.Members.Page,
             result.Members.PageSize,
             result.ActiveMembers,
+            result.PendingInvitations,
             result.MaxUsers);
 }

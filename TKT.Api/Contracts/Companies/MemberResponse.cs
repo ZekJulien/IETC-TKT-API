@@ -1,9 +1,10 @@
 namespace TKT.Api.Contracts.Companies;
 
 public sealed record MemberResponse(
-    Guid AccountId,
+    Guid? AccountId,
+    Guid? InvitationId,
     string Email,
     string? DisplayName,
     string Role,
-    bool IsActive,
+    string Status,
     DateTimeOffset? JoinedAt);

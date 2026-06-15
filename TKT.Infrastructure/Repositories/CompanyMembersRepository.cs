@@ -75,19 +75,39 @@ public class CompanyMembersRepository(IDbSession db) : ICompanyMembersRepository
         return _db.ExecuteAsync(sql, new { CompanyId = companyId, AccountId = accountId, IsActive = isActive });
     }
 
+    private const string TeamUnionSql = """
+                                        SELECT cm.account_id AS account_id, NULL::uuid AS invitation_id,
+                                               a.email AS email, up.display_name AS display_name, cm.role AS role,
+                                               CASE WHEN cm.is_active THEN 'active' ELSE 'inactive' END AS status,
+                                               cm.joined_at AS joined_at
+                                        FROM company_members cm
+                                        JOIN accounts a ON a.account_id = cm.account_id
+                                        LEFT JOIN user_profiles up ON up.account_id = cm.account_id
+                                        WHERE cm.company_id = @CompanyId
+                                        UNION ALL
+                                        SELECT NULL::uuid AS account_id, pi.invitation_id AS invitation_id,
+                                               pi.email AS email, NULL AS display_name, pi.role AS role,
+                                               'pending' AS status, pi.invited_at AS joined_at
+                                        FROM pending_invitations pi
+                                        WHERE pi.company_id = @CompanyId
+                                          AND pi.accepted_at IS NULL AND pi.revoked_at IS NULL AND pi.expires_at > NOW()
+                                        """;
+
+    private const string TeamFilterSql = """
+                                          WHERE (@Role::text IS NULL OR t.role = @Role::text)
+                                            AND (@IsActive::boolean IS NULL
+                                                 OR t.status = CASE WHEN @IsActive::boolean THEN 'active' ELSE 'inactive' END)
+                                          """;
+
     public Task<IReadOnlyList<MemberSummaryRow>> ListAsync(Guid companyId, int page, int pageSize, string? role, bool? isActive)
     {
-        const string sql = """
-                           SELECT cm.account_id, a.email, up.display_name, cm.role, cm.is_active, cm.joined_at
-                           FROM company_members cm
-                           JOIN accounts a ON a.account_id = cm.account_id
-                           LEFT JOIN user_profiles up ON up.account_id = cm.account_id
-                           WHERE cm.company_id = @CompanyId
-                             AND (@Role::text IS NULL OR cm.role = @Role::text)
-                             AND (@IsActive::boolean IS NULL OR cm.is_active = @IsActive::boolean)
-                           ORDER BY cm.joined_at NULLS LAST, cm.account_id
-                           LIMIT @PageSize OFFSET @Offset;
-                           """;
+        var sql = $"""
+                  SELECT t.account_id, t.invitation_id, t.email, t.display_name, t.role, t.status, t.joined_at
+                  FROM ({TeamUnionSql}) t
+                  {TeamFilterSql}
+                  ORDER BY t.joined_at NULLS LAST, t.email
+                  LIMIT @PageSize OFFSET @Offset;
+                  """;
         return _db.QueryAsync<MemberSummaryRow>(sql, new
         {
             CompanyId = companyId,
@@ -100,13 +120,11 @@ public class CompanyMembersRepository(IDbSession db) : ICompanyMembersRepository
 
     public Task<int> CountAsync(Guid companyId, string? role, bool? isActive)
     {
-        const string sql = """
-                           SELECT COUNT(*)::int
-                           FROM company_members cm
-                           WHERE cm.company_id = @CompanyId
-                             AND (@Role::text IS NULL OR cm.role = @Role::text)
-                             AND (@IsActive::boolean IS NULL OR cm.is_active = @IsActive::boolean);
-                           """;
+        var sql = $"""
+                  SELECT COUNT(*)::int
+                  FROM ({TeamUnionSql}) t
+                  {TeamFilterSql};
+                  """;
         return _db.ExecuteScalarAsync<int>(sql, new { CompanyId = companyId, Role = role, IsActive = isActive });
     }
 }

@@ -1,9 +1,10 @@
 namespace TKT.Core.IGateways;
 
 public sealed record MemberSummary(
-    Guid AccountId,
+    Guid? AccountId,
+    Guid? InvitationId,
     string Email,
     string? DisplayName,
     string Role,
-    bool IsActive,
+    string Status,
     DateTimeOffset? JoinedAt);

@@ -14,4 +14,10 @@ public class CompanyInvitationGateway(ICompanyInvitationRepository repository) :
 
     public Task CreateAsync(PendingInvitation invitation)
         => _repository.CreateAsync(invitation.ToRow());
+
+    public Task<int> CountActivePendingAsync(Guid companyId)
+        => _repository.CountActivePendingAsync(companyId);
+
+    public Task<int> RevokeAsync(Guid companyId, Guid invitationId)
+        => _repository.RevokeAsync(companyId, invitationId);
 }

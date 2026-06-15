@@ -36,7 +36,8 @@ public sealed class InviteMemberUseCase(
 
         var maxUsers = await _subscriptions.GetMaxUsersAsync(input.CompanyId);
         var activeMembers = await _members.CountActiveMembersAsync(input.CompanyId);
-        if (activeMembers >= maxUsers)
+        var pendingInvitations = await _invitations.CountActivePendingAsync(input.CompanyId);
+        if (activeMembers + pendingInvitations >= maxUsers)
             throw new ConflictException(InvitationErrors.QuotaExceeded);
 
         var account = await _accounts.GetByNormalizedEmailAsync(email.Normalized);

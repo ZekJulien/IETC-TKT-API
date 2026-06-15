@@ -6,4 +6,5 @@ namespace TKT.Core.UseCases.Companies.ListMembers;
 public sealed record ListMembersResult(
     PagedResult<MemberSummary> Members,
     int ActiveMembers,
+    int PendingInvitations,
     int MaxUsers);

@@ -5,6 +5,7 @@ using TKT.Api.Mappers;
 using TKT.Core.UseCases.Companies.ChangeMemberRole;
 using TKT.Core.UseCases.Companies.InviteMember;
 using TKT.Core.UseCases.Companies.ListMembers;
+using TKT.Core.UseCases.Companies.RevokeInvitation;
 using TKT.Core.UseCases.Companies.SetMemberActive;
 
 namespace TKT.Api.EndPoints;
@@ -43,6 +44,13 @@ public static class CompanyRouter
             var result = await useCase.ExecuteAsync(req.ToInput(companyId, accountId, user.GetCompanyId(), user.GetAccountId()));
             return Results.Ok(result.ToResponse());
         });
+
+        app.MapDelete("api/companies/{companyId:guid}/invitations/{invitationId:guid}",
+            async (Guid companyId, Guid invitationId, ClaimsPrincipal user, IRevokeInvitationUseCase useCase) =>
+        {
+            await useCase.ExecuteAsync(new RevokeInvitationInput(companyId, user.GetCompanyId(), user.GetAccountId(), invitationId));
+            return Results.NoContent();
+        }).WithTags("companies");
 
         return app;
     }

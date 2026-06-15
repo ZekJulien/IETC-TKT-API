@@ -28,4 +28,25 @@ public class CompanyInvitationRepository(IDbSession db) : ICompanyInvitationRepo
                            """;
         return _db.ExecuteAsync(sql, invitation);
     }
+
+    public Task<int> CountActivePendingAsync(Guid companyId)
+    {
+        const string sql = """
+                           SELECT COUNT(*)::int FROM pending_invitations
+                           WHERE company_id = @CompanyId
+                             AND accepted_at IS NULL AND revoked_at IS NULL AND expires_at > NOW();
+                           """;
+        return _db.ExecuteScalarAsync<int>(sql, new { CompanyId = companyId });
+    }
+
+    public Task<int> RevokeAsync(Guid companyId, Guid invitationId)
+    {
+        const string sql = """
+                           UPDATE pending_invitations
+                           SET revoked_at = NOW()
+                           WHERE invitation_id = @InvitationId AND company_id = @CompanyId
+                             AND accepted_at IS NULL AND revoked_at IS NULL;
+                           """;
+        return _db.ExecuteAsync(sql, new { CompanyId = companyId, InvitationId = invitationId });
+    }
 }
