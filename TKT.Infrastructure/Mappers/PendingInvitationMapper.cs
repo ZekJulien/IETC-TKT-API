@@ -15,7 +15,23 @@ public static class PendingInvitationMapper
             Role = row.Role,
             Department = row.Department,
             JobTitle = row.JobTitle,
+            InvitationCode = row.InvitationCode,
             InvitedBy = row.InvitedBy,
+        };
+    }
+
+    public static PendingInvitationRow ToRow(this PendingInvitation invitation)
+    {
+        return new PendingInvitationRow
+        {
+            InvitationId = invitation.InvitationId,
+            CompanyId = invitation.CompanyId,
+            Email = invitation.Email,
+            Role = invitation.Role,
+            Department = invitation.Department,
+            JobTitle = invitation.JobTitle,
+            InvitationCode = invitation.InvitationCode,
+            InvitedBy = invitation.InvitedBy,
         };
     }
 }

@@ -7,6 +7,7 @@ using TKT.Core.UseCases.Auth.Register;
 using TKT.Core.Services;
 using TKT.Core.UseCases.Onboarding.CreateCompany;
 using TKT.Core.UseCases.Onboarding.JoinInvitation;
+using TKT.Core.UseCases.Companies.InviteMember;
 
 namespace TKT.Core;
 
@@ -21,6 +22,7 @@ public static class DependencyInjection
         services.AddScoped<IAccessTokenIssuer, AccessTokenIssuer>();
         services.AddScoped<ICreateCompanyUseCase, CreateCompanyUseCase>();
         services.AddScoped<IJoinInvitationUseCase, JoinInvitationUseCase>();
+        services.AddScoped<IInviteMemberUseCase, InviteMemberUseCase>();
         services.AddScoped<IGetMeUseCase, GetMeUseCase>();
 
         return services;

@@ -8,5 +8,6 @@ public sealed class PendingInvitationRow
     public string Role { get; set; } = string.Empty;
     public string? Department { get; set; }
     public string? JobTitle { get; set; }
+    public string InvitationCode { get; set; } = string.Empty;
     public Guid InvitedBy { get; set; }
 }
