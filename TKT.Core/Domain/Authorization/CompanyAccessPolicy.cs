@@ -6,8 +6,8 @@ public static class CompanyAccessPolicy
 {
     private static readonly Dictionary<string, HashSet<CompanyPermission>> Grants = new()
     {
-        [CompanyRoles.Owner] = [CompanyPermission.InviteMember],
-        [CompanyRoles.Admin] = [CompanyPermission.InviteMember],
+        [CompanyRoles.Owner] = [CompanyPermission.InviteMember, CompanyPermission.ListMembers, CompanyPermission.ChangeMemberRole, CompanyPermission.SetMemberActive],
+        [CompanyRoles.Admin] = [CompanyPermission.InviteMember, CompanyPermission.ListMembers, CompanyPermission.ChangeMemberRole, CompanyPermission.SetMemberActive],
     };
 
     public static bool Allows(string? role, CompanyPermission permission)

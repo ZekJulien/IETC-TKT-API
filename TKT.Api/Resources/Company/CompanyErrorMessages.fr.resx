@@ -30,4 +30,16 @@
   <data name="company.already_exists" xml:space="preserve">
     <value>Une entreprise avec ce nom ou ce slug existe déjà.</value>
   </data>
+  <data name="company.forbidden" xml:space="preserve">
+    <value>Vous n'êtes pas autorisé à gérer les membres de cette entreprise.</value>
+  </data>
+  <data name="company.member_not_found" xml:space="preserve">
+    <value>Ce membre est introuvable dans l'entreprise.</value>
+  </data>
+  <data name="company.last_owner" xml:space="preserve">
+    <value>Le dernier owner ne peut pas être rétrogradé ou désactivé.</value>
+  </data>
+  <data name="company.member_quota_exceeded" xml:space="preserve">
+    <value>Limite de membres atteinte pour le plan actuel.</value>
+  </data>
 </root>

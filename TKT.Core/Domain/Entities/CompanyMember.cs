@@ -8,6 +8,7 @@ public class CompanyMember
     public Guid CompanyId { get; set; }
     public Guid AccountId { get; set; }
     public string Role { get; set; } = CompanyRoles.Member;
+    public bool IsActive { get; set; } = true;
     public Guid? InvitedBy { get; set; }
     public string? Department { get; set; }
     public string? JobTitle { get; set; }
