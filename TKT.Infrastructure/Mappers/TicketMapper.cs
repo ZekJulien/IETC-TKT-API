@@ -24,4 +24,11 @@ public static class TicketMapper
 
     public static TicketCreated ToCreated(this TicketCreatedRow row)
         => new(row.TicketNumber, row.CreatedAt);
+
+    public static TicketSummary ToSummary(this TicketSummaryRow row)
+        => new(row.TicketId, row.TicketNumber, row.Title, row.Status, row.Priority,
+               row.CreatedBy, row.AssignedTo, row.CategoryId, row.CreatedAt);
+
+    public static StatusCount ToStatusCount(this StatusCountRow row)
+        => new(row.Status, row.Count);
 }

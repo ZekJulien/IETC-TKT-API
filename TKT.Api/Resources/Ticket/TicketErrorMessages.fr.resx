@@ -30,6 +30,9 @@
   <data name="ticket.assignee_invalid" xml:space="preserve">
     <value>L'assigné doit être membre de cette entreprise.</value>
   </data>
+  <data name="ticket.sort_invalid" xml:space="preserve">
+    <value>Tri invalide. Valeurs autorisées : created_at, priority, status.</value>
+  </data>
   <data name="ticket.forbidden" xml:space="preserve">
     <value>Vous n'êtes pas autorisé à créer un ticket dans cette entreprise.</value>
   </data>

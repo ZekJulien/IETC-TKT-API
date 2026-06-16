@@ -14,4 +14,10 @@ public static class TicketAuthorizationPolicy
 
     public static bool CanCreate(string? role)
         => role is not null && CanCreateRoles.Contains(role);
+
+    public static bool CanList(string? role)
+        => role is not null;
+
+    public static bool RestrictsToOwnTickets(string? role)
+        => string.Equals(role, CompanyRoles.Member, StringComparison.OrdinalIgnoreCase);
 }
