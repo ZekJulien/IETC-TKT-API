@@ -69,6 +69,9 @@ public static class DependencyInjection
         services.AddScoped<IEmailQueueGateway, EmailQueueGateway>();
         services.AddScoped<IEmailQueueRepository, EmailQueueRepository>();
 
+        services.AddScoped<ITicketsGateway, TicketsGateway>();
+        services.AddScoped<ITicketsRepository, TicketsRepository>();
+
         return services;
     }
 }

@@ -55,5 +55,6 @@ app.AddAuthRouter();
 app.AddOnboardingRouter();
 app.AddAccountRouter();
 app.AddCompanyRouter();
+app.AddTicketRouter();
 
 app.Run();

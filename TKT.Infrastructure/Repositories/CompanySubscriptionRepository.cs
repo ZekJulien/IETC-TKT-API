@@ -17,4 +17,15 @@ public class CompanySubscriptionRepository(IDbSession db) : ICompanySubscription
                            """;
         return _db.ExecuteScalarAsync<int>(sql, new { CompanyId = companyId });
     }
+
+    public Task<int> GetMaxTicketsPerMonthAsync(Guid companyId)
+    {
+        const string sql = """
+                           SELECT max_tickets_per_month
+                           FROM company_subscriptions
+                           WHERE company_id = @CompanyId AND valid_during @> NOW()
+                           LIMIT 1;
+                           """;
+        return _db.ExecuteScalarAsync<int>(sql, new { CompanyId = companyId });
+    }
 }
