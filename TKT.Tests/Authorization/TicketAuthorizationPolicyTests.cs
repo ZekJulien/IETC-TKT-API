@@ -28,6 +28,19 @@ public class TicketAuthorizationPolicyTests
     public void CanList_WithNullRole_IsFalse()
         => Assert.False(TicketAuthorizationPolicy.CanList(null));
 
+    [Theory]
+    [InlineData(CompanyRoles.Owner)]
+    [InlineData(CompanyRoles.Admin)]
+    [InlineData(CompanyRoles.Agent)]
+    public void CanBeAssigned_WithStaffRole_IsTrue(string role)
+        => Assert.True(TicketAuthorizationPolicy.CanBeAssigned(role));
+
+    [Theory]
+    [InlineData(CompanyRoles.Member)]
+    [InlineData(null)]
+    public void CanBeAssigned_WithMemberOrNull_IsFalse(string? role)
+        => Assert.False(TicketAuthorizationPolicy.CanBeAssigned(role));
+
     [Fact]
     public void RestrictsToOwnTickets_OnlyForMember()
     {

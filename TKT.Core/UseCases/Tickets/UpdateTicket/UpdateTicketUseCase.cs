@@ -30,7 +30,8 @@ public sealed class UpdateTicketUseCase(
         var status = ResolveStatus(input.Status, current.Status);
         var priority = input.Priority is null ? null : TicketPriority.CreateOrDefault(input.Priority).Value;
 
-        if (input.AssignedTo is { } assigneeId && !await _members.MemberExistsAsync(companyId, assigneeId))
+        if (input.AssignedTo is { } assigneeId &&
+            !TicketAuthorizationPolicy.CanBeAssigned(await _members.GetActiveRoleAsync(companyId, assigneeId)))
             throw new ValidationException(TicketErrors.AssigneeInvalid);
 
         var update = new TicketUpdate(companyId, input.TicketId, status, priority,

@@ -35,7 +35,8 @@ public sealed class CreateTicketUseCase(
         if (usedThisMonth >= maxPerMonth)
             throw new ConflictException(TicketErrors.QuotaExceeded);
 
-        if (input.AssignedTo is { } assigneeId && !await _members.MemberExistsAsync(companyId, assigneeId))
+        if (input.AssignedTo is { } assigneeId &&
+            !TicketAuthorizationPolicy.CanBeAssigned(await _members.GetActiveRoleAsync(companyId, assigneeId)))
             throw new ValidationException(TicketErrors.AssigneeInvalid);
 
         var ticket = new Ticket
