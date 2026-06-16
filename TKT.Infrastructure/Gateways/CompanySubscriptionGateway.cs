@@ -9,4 +9,7 @@ public class CompanySubscriptionGateway(ICompanySubscriptionRepository repositor
 
     public Task<int> GetMaxUsersAsync(Guid companyId)
         => _repository.GetMaxUsersAsync(companyId);
+
+    public Task<int> GetMaxTicketsPerMonthAsync(Guid companyId)
+        => _repository.GetMaxTicketsPerMonthAsync(companyId);
 }

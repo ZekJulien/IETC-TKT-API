@@ -14,6 +14,7 @@ using TKT.Core.UseCases.Companies.ListMembers;
 using TKT.Core.UseCases.Companies.ChangeMemberRole;
 using TKT.Core.UseCases.Companies.RevokeInvitation;
 using TKT.Core.UseCases.Companies.SetMemberActive;
+using TKT.Core.UseCases.Tickets.CreateTicket;
 
 namespace TKT.Core;
 
@@ -36,6 +37,7 @@ public static class DependencyInjection
         services.AddScoped<IRevokeInvitationUseCase, RevokeInvitationUseCase>();
         services.AddScoped<IGetMeUseCase, GetMeUseCase>();
         services.AddScoped<IListMyCompaniesUseCase, ListMyCompaniesUseCase>();
+        services.AddScoped<ICreateTicketUseCase, CreateTicketUseCase>();
 
         return services;
     }
