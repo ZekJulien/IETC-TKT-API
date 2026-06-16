@@ -1,5 +1,7 @@
 using TKT.Api.Contracts.Tickets;
+using TKT.Core.IGateways;
 using TKT.Core.UseCases.Tickets.CreateTicket;
+using TKT.Core.UseCases.Tickets.ListTickets;
 
 namespace TKT.Api.Mappers;
 
@@ -10,4 +12,22 @@ public static class TicketMapper
 
     public static CreateTicketResponse ToResponse(this CreateTicketResult result)
         => new(result.TicketId, result.TicketNumber, result.Status, result.Priority, result.CreatedAt);
+
+    public static TicketListItemResponse ToResponse(this TicketSummary summary)
+        => new(summary.TicketId, summary.TicketNumber, summary.Title, summary.Status, summary.Priority,
+               summary.CreatedBy, summary.AssignedTo, summary.CategoryId, summary.CreatedAt);
+
+    public static TicketListResponse ToResponse(this ListTicketsResult result)
+    {
+        var page = result.Tickets;
+        var totalPages = page.PageSize > 0 ? (int)Math.Ceiling((double)page.Total / page.PageSize) : 0;
+        var statusCounts = result.StatusCounts.ToDictionary(c => c.Status, c => c.Count);
+        return new TicketListResponse(
+            page.Items.Select(i => i.ToResponse()).ToList(),
+            page.Total,
+            page.Page,
+            page.PageSize,
+            totalPages,
+            statusCounts);
+    }
 }

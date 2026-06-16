@@ -30,6 +30,9 @@
   <data name="ticket.assignee_invalid" xml:space="preserve">
     <value>The assignee must be a member of this company.</value>
   </data>
+  <data name="ticket.sort_invalid" xml:space="preserve">
+    <value>Invalid sort. Allowed values: created_at, priority, status.</value>
+  </data>
   <data name="ticket.forbidden" xml:space="preserve">
     <value>You are not allowed to create a ticket in this company.</value>
   </data>
