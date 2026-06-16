@@ -9,5 +9,6 @@ public static class TicketErrors
     public const string QuotaExceeded = "ticket.quota_exceeded";
     public const string AssigneeInvalid = "ticket.assignee_invalid";
     public const string SortInvalid = "ticket.sort_invalid";
+    public const string NotFound = "ticket.not_found";
     public const string Forbidden = "ticket.forbidden";
 }

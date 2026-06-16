@@ -30,4 +30,9 @@ public static class TicketMapper
             totalPages,
             statusCounts);
     }
+
+    public static TicketDetailResponse ToResponse(this TicketDetail detail)
+        => new(detail.TicketId, detail.TicketNumber, detail.Title, detail.Description, detail.Status, detail.Priority,
+               detail.CreatedBy, detail.AssignedTo, detail.TeamId, detail.CategoryId, detail.Source, detail.DueDate,
+               detail.IsLocked, detail.CreatedAt, detail.UpdatedAt, detail.ResolvedAt, detail.ClosedAt);
 }

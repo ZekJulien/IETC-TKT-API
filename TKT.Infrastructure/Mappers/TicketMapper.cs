@@ -31,4 +31,9 @@ public static class TicketMapper
 
     public static StatusCount ToStatusCount(this StatusCountRow row)
         => new(row.Status, row.Count);
+
+    public static TicketDetail ToDetail(this TicketDetailRow row)
+        => new(row.TicketId, row.TicketNumber, row.Title, row.Description, row.Status, row.Priority,
+               row.CreatedBy, row.AssignedTo, row.TeamId, row.CategoryId, row.Source, row.DueDate,
+               row.IsLocked, row.CreatedAt, row.UpdatedAt, row.ResolvedAt, row.ClosedAt);
 }

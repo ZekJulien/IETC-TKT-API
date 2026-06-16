@@ -9,4 +9,5 @@ public interface ITicketsGateway
     Task<int> CountCreatedThisMonthAsync(Guid companyId);
     Task<PagedResult<TicketSummary>> ListAsync(TicketListQuery query);
     Task<IReadOnlyList<StatusCount>> CountByStatusAsync(TicketListQuery query);
+    Task<TicketDetail?> GetByIdAsync(Guid companyId, Guid ticketId);
 }

@@ -10,4 +10,5 @@ public interface ITicketsRepository
     Task<IReadOnlyList<TicketSummaryRow>> ListAsync(TicketListQuery query);
     Task<int> CountAsync(TicketListQuery query);
     Task<IReadOnlyList<StatusCountRow>> CountByStatusAsync(TicketListQuery query);
+    Task<TicketDetailRow?> GetByIdAsync(Guid companyId, Guid ticketId);
 }

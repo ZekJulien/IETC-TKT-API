@@ -84,4 +84,16 @@ public class TicketsRepository(IDbSession db) : ITicketsRepository
                            """;
         return _db.QueryAsync<StatusCountRow>(sql, query);
     }
+
+    public Task<TicketDetailRow?> GetByIdAsync(Guid companyId, Guid ticketId)
+    {
+        const string sql = """
+                           SELECT ticket_id, ticket_number, title, description, status, priority,
+                                  created_by, assigned_to, team_id, category_id, source, due_date,
+                                  is_locked, created_at, updated_at, resolved_at, closed_at
+                           FROM tickets
+                           WHERE ticket_id = @TicketId AND company_id = @CompanyId AND deleted_at IS NULL;
+                           """;
+        return _db.QuerySingleOrDefaultAsync<TicketDetailRow>(sql, new { CompanyId = companyId, TicketId = ticketId });
+    }
 }
