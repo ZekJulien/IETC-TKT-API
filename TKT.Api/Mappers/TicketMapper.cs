@@ -2,6 +2,7 @@ using TKT.Api.Contracts.Tickets;
 using TKT.Core.IGateways;
 using TKT.Core.UseCases.Tickets.CreateTicket;
 using TKT.Core.UseCases.Tickets.ListTickets;
+using TKT.Core.UseCases.Tickets.UpdateTicket;
 
 namespace TKT.Api.Mappers;
 
@@ -30,6 +31,9 @@ public static class TicketMapper
             totalPages,
             statusCounts);
     }
+
+    public static UpdateTicketInput ToInput(this UpdateTicketRequest request, Guid? callerCompanyId, Guid callerAccountId, Guid ticketId)
+        => new(callerCompanyId, callerAccountId, ticketId, request.Status, request.Priority, request.AssignedTo, request.CategoryId, request.DueDate);
 
     public static TicketDetailResponse ToResponse(this TicketDetail detail)
         => new(detail.TicketId, detail.TicketNumber, detail.Title, detail.Description, detail.Status, detail.Priority,

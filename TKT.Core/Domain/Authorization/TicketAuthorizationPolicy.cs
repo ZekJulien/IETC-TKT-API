@@ -12,8 +12,18 @@ public static class TicketAuthorizationPolicy
         CompanyRoles.Member,
     };
 
+    private static readonly HashSet<string> CanModifyRoles = new(StringComparer.OrdinalIgnoreCase)
+    {
+        CompanyRoles.Owner,
+        CompanyRoles.Admin,
+        CompanyRoles.Agent,
+    };
+
     public static bool CanCreate(string? role)
         => role is not null && CanCreateRoles.Contains(role);
+
+    public static bool CanModify(string? role)
+        => role is not null && CanModifyRoles.Contains(role);
 
     public static bool CanList(string? role)
         => role is not null;

@@ -10,4 +10,5 @@ public interface ITicketsGateway
     Task<PagedResult<TicketSummary>> ListAsync(TicketListQuery query);
     Task<IReadOnlyList<StatusCount>> CountByStatusAsync(TicketListQuery query);
     Task<TicketDetail?> GetByIdAsync(Guid companyId, Guid ticketId);
+    Task<TicketDetail?> UpdateAsync(TicketUpdate update);
 }

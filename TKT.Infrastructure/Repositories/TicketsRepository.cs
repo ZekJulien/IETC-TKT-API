@@ -96,4 +96,21 @@ public class TicketsRepository(IDbSession db) : ITicketsRepository
                            """;
         return _db.QuerySingleOrDefaultAsync<TicketDetailRow>(sql, new { CompanyId = companyId, TicketId = ticketId });
     }
+
+    public Task<TicketDetailRow?> UpdateAsync(TicketUpdate update)
+    {
+        const string sql = """
+                           UPDATE tickets SET
+                               status = COALESCE(@Status, status),
+                               priority = COALESCE(@Priority, priority),
+                               assigned_to = COALESCE(@AssignedTo, assigned_to),
+                               category_id = COALESCE(@CategoryId, category_id),
+                               due_date = COALESCE(@DueDate, due_date)
+                           WHERE ticket_id = @TicketId AND company_id = @CompanyId AND deleted_at IS NULL
+                           RETURNING ticket_id, ticket_number, title, description, status, priority,
+                                     created_by, assigned_to, team_id, category_id, source, due_date,
+                                     is_locked, created_at, updated_at, resolved_at, closed_at;
+                           """;
+        return _db.QuerySingleOrDefaultAsync<TicketDetailRow>(sql, update);
+    }
 }

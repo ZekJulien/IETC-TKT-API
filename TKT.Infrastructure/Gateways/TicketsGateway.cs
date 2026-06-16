@@ -37,4 +37,10 @@ public class TicketsGateway(ITicketsRepository repository) : ITicketsGateway
         var row = await _repository.GetByIdAsync(companyId, ticketId);
         return row?.ToDetail();
     }
+
+    public async Task<TicketDetail?> UpdateAsync(TicketUpdate update)
+    {
+        var row = await _repository.UpdateAsync(update);
+        return row?.ToDetail();
+    }
 }

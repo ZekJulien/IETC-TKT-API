@@ -36,6 +36,12 @@
   <data name="ticket.not_found" xml:space="preserve">
     <value>Ticket introuvable.</value>
   </data>
+  <data name="ticket.status_invalid" xml:space="preserve">
+    <value>Statut invalide. Valeurs autorisées : open, in_progress, pending, resolved, closed.</value>
+  </data>
+  <data name="ticket.invalid_transition" xml:space="preserve">
+    <value>Cette transition de statut n'est pas autorisée depuis le statut actuel.</value>
+  </data>
   <data name="ticket.forbidden" xml:space="preserve">
     <value>Vous n'êtes pas autorisé à créer un ticket dans cette entreprise.</value>
   </data>

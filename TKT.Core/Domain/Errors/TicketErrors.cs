@@ -10,5 +10,7 @@ public static class TicketErrors
     public const string AssigneeInvalid = "ticket.assignee_invalid";
     public const string SortInvalid = "ticket.sort_invalid";
     public const string NotFound = "ticket.not_found";
+    public const string StatusInvalid = "ticket.status_invalid";
+    public const string InvalidTransition = "ticket.invalid_transition";
     public const string Forbidden = "ticket.forbidden";
 }

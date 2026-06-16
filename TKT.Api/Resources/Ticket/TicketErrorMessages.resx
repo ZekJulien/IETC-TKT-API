@@ -36,6 +36,12 @@
   <data name="ticket.not_found" xml:space="preserve">
     <value>Ticket not found.</value>
   </data>
+  <data name="ticket.status_invalid" xml:space="preserve">
+    <value>Invalid status. Allowed values: open, in_progress, pending, resolved, closed.</value>
+  </data>
+  <data name="ticket.invalid_transition" xml:space="preserve">
+    <value>This status transition is not allowed from the current status.</value>
+  </data>
   <data name="ticket.forbidden" xml:space="preserve">
     <value>You are not allowed to create a ticket in this company.</value>
   </data>
