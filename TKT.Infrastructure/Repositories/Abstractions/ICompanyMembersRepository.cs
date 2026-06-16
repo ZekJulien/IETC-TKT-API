@@ -14,4 +14,5 @@ public interface ICompanyMembersRepository
     Task SetActiveAsync(Guid companyId, Guid accountId, bool isActive);
     Task<IReadOnlyList<MemberSummaryRow>> ListAsync(Guid companyId, int page, int pageSize, string? role, bool? isActive);
     Task<int> CountAsync(Guid companyId, string? role, bool? isActive);
+    Task<IReadOnlyList<MemberDirectoryRow>> ListDirectoryAsync(Guid companyId);
 }

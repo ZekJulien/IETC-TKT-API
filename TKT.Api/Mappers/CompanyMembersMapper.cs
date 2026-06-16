@@ -30,6 +30,9 @@ public static class CompanyMembersMapper
     public static MemberResponse ToResponse(this MemberSummary member)
         => new(member.AccountId, member.InvitationId, member.Email, member.DisplayName, member.Role, member.Status, member.JoinedAt);
 
+    public static MemberDirectoryResponse ToResponse(this MemberDirectoryEntry entry)
+        => new(entry.AccountId, entry.Email, entry.Role, entry.FirstName, entry.LastName);
+
     public static MemberListResponse ToResponse(this ListMembersResult result)
         => new(
             result.Members.Items.Select(m => m.ToResponse()).ToList(),

@@ -43,4 +43,10 @@ public class CompanyMembersGateway(ICompanyMembersRepository repository) : IComp
         var total = await _repository.CountAsync(companyId, role, isActive);
         return new PagedResult<MemberSummary>(rows.Select(r => r.ToSummary()).ToList(), total, page, pageSize);
     }
+
+    public async Task<IReadOnlyList<MemberDirectoryEntry>> ListDirectoryAsync(Guid companyId)
+    {
+        var rows = await _repository.ListDirectoryAsync(companyId);
+        return rows.Select(r => r.ToDirectoryEntry()).ToList();
+    }
 }

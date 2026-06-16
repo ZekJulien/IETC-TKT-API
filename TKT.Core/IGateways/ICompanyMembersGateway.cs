@@ -14,4 +14,5 @@ public interface ICompanyMembersGateway
     Task UpdateRoleAsync(Guid companyId, Guid accountId, string role);
     Task SetActiveAsync(Guid companyId, Guid accountId, bool isActive);
     Task<PagedResult<MemberSummary>> ListAsync(Guid companyId, int page, int pageSize, string? role, bool? isActive);
+    Task<IReadOnlyList<MemberDirectoryEntry>> ListDirectoryAsync(Guid companyId);
 }

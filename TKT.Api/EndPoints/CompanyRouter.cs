@@ -5,6 +5,7 @@ using TKT.Api.Mappers;
 using TKT.Core.UseCases.Companies.ChangeMemberRole;
 using TKT.Core.UseCases.Companies.InviteMember;
 using TKT.Core.UseCases.Companies.ListMembers;
+using TKT.Core.UseCases.Companies.MemberDirectory;
 using TKT.Core.UseCases.Companies.RevokeInvitation;
 using TKT.Core.UseCases.Companies.SetMemberActive;
 
@@ -29,6 +30,13 @@ public static class CompanyRouter
                 page ?? 1, pageSize ?? 20, role, active);
             var result = await useCase.ExecuteAsync(input);
             return Results.Ok(result.ToResponse());
+        });
+
+        group.MapGet("directory", async (Guid companyId, ClaimsPrincipal user, IMemberDirectoryUseCase useCase) =>
+        {
+            var input = new MemberDirectoryInput(companyId, user.GetCompanyId(), user.GetAccountId());
+            var entries = await useCase.ExecuteAsync(input);
+            return Results.Ok(entries.Select(e => e.ToResponse()).ToList());
         });
 
         group.MapPatch("{accountId:guid}", async (Guid companyId, Guid accountId, ChangeMemberRoleRequest req,

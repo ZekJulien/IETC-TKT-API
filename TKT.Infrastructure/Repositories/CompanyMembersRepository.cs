@@ -127,4 +127,18 @@ public class CompanyMembersRepository(IDbSession db) : ICompanyMembersRepository
                   """;
         return _db.ExecuteScalarAsync<int>(sql, new { CompanyId = companyId, Role = role, IsActive = isActive });
     }
+
+    public Task<IReadOnlyList<MemberDirectoryRow>> ListDirectoryAsync(Guid companyId)
+    {
+        const string sql = """
+                           SELECT cm.account_id AS account_id, a.email AS email, cm.role AS role,
+                                  up.first_name AS first_name, up.last_name AS last_name
+                           FROM company_members cm
+                           JOIN accounts a ON a.account_id = cm.account_id
+                           LEFT JOIN user_profiles up ON up.account_id = cm.account_id
+                           WHERE cm.company_id = @CompanyId AND cm.is_active = TRUE
+                           ORDER BY up.last_name NULLS LAST, up.first_name NULLS LAST, a.email;
+                           """;
+        return _db.QueryAsync<MemberDirectoryRow>(sql, new { CompanyId = companyId });
+    }
 }

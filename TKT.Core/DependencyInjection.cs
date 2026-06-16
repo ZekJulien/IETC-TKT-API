@@ -11,6 +11,7 @@ using TKT.Core.UseCases.Onboarding.CreateCompany;
 using TKT.Core.UseCases.Onboarding.JoinInvitation;
 using TKT.Core.UseCases.Companies.InviteMember;
 using TKT.Core.UseCases.Companies.ListMembers;
+using TKT.Core.UseCases.Companies.MemberDirectory;
 using TKT.Core.UseCases.Companies.ChangeMemberRole;
 using TKT.Core.UseCases.Companies.RevokeInvitation;
 using TKT.Core.UseCases.Companies.SetMemberActive;
@@ -38,6 +39,7 @@ public static class DependencyInjection
         services.AddScoped<IJoinInvitationUseCase, JoinInvitationUseCase>();
         services.AddScoped<IInviteMemberUseCase, InviteMemberUseCase>();
         services.AddScoped<IListMembersUseCase, ListMembersUseCase>();
+        services.AddScoped<IMemberDirectoryUseCase, MemberDirectoryUseCase>();
         services.AddScoped<IChangeMemberRoleUseCase, ChangeMemberRoleUseCase>();
         services.AddScoped<ISetMemberActiveUseCase, SetMemberActiveUseCase>();
         services.AddScoped<IRevokeInvitationUseCase, RevokeInvitationUseCase>();
