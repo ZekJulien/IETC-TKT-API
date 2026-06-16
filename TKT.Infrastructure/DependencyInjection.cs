@@ -72,6 +72,9 @@ public static class DependencyInjection
         services.AddScoped<ITicketsGateway, TicketsGateway>();
         services.AddScoped<ITicketsRepository, TicketsRepository>();
 
+        services.AddScoped<ICommentsGateway, CommentsGateway>();
+        services.AddScoped<ICommentsRepository, CommentsRepository>();
+
         return services;
     }
 }

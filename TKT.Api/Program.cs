@@ -56,5 +56,6 @@ app.AddOnboardingRouter();
 app.AddAccountRouter();
 app.AddCompanyRouter();
 app.AddTicketRouter();
+app.AddCommentRouter();
 
 app.Run();
