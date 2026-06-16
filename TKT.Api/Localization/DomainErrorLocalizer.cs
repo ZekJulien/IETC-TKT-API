@@ -4,6 +4,7 @@ using TKT.Api.Auth;
 using TKT.Api.Company;
 using TKT.Api.Invitation;
 using TKT.Api.Ticket;
+using TKT.Api.Comment;
 
 namespace TKT.Api.Localization;
 
@@ -12,7 +13,8 @@ public sealed class DomainErrorLocalizer(
     IStringLocalizer<AccountErrorMessages> account,
     IStringLocalizer<CompanyErrorMessages> company,
     IStringLocalizer<InvitationErrorMessages> invitation,
-    IStringLocalizer<TicketErrorMessages> ticket)
+    IStringLocalizer<TicketErrorMessages> ticket,
+    IStringLocalizer<CommentErrorMessages> comment)
 {
     private readonly IReadOnlyDictionary<string, IStringLocalizer> _byDomain = new Dictionary<string, IStringLocalizer>
     {
@@ -21,6 +23,7 @@ public sealed class DomainErrorLocalizer(
         ["company"] = company,
         ["invitation"] = invitation,
         ["ticket"] = ticket,
+        ["comment"] = comment,
     };
 
     public string this[string code]
