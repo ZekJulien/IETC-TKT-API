@@ -5,6 +5,7 @@ using TKT.Api.Mappers;
 using TKT.Core.UseCases.Tickets.CreateTicket;
 using TKT.Core.UseCases.Tickets.ListTickets;
 using TKT.Core.UseCases.Tickets.GetTicket;
+using TKT.Core.UseCases.Tickets.UpdateTicket;
 
 namespace TKT.Api.EndPoints;
 
@@ -35,6 +36,12 @@ public static class TicketRouter
         group.MapGet("{ticketId:guid}", async (Guid ticketId, ClaimsPrincipal user, IGetTicketUseCase useCase) =>
         {
             var detail = await useCase.ExecuteAsync(new GetTicketInput(user.GetCompanyId(), user.GetAccountId(), ticketId));
+            return Results.Ok(detail.ToResponse());
+        });
+
+        group.MapPatch("{ticketId:guid}", async (Guid ticketId, UpdateTicketRequest req, ClaimsPrincipal user, IUpdateTicketUseCase useCase) =>
+        {
+            var detail = await useCase.ExecuteAsync(req.ToInput(user.GetCompanyId(), user.GetAccountId(), ticketId));
             return Results.Ok(detail.ToResponse());
         });
 

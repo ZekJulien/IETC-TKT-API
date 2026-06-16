@@ -17,6 +17,7 @@ using TKT.Core.UseCases.Companies.SetMemberActive;
 using TKT.Core.UseCases.Tickets.CreateTicket;
 using TKT.Core.UseCases.Tickets.ListTickets;
 using TKT.Core.UseCases.Tickets.GetTicket;
+using TKT.Core.UseCases.Tickets.UpdateTicket;
 
 namespace TKT.Core;
 
@@ -42,6 +43,7 @@ public static class DependencyInjection
         services.AddScoped<ICreateTicketUseCase, CreateTicketUseCase>();
         services.AddScoped<IListTicketsUseCase, ListTicketsUseCase>();
         services.AddScoped<IGetTicketUseCase, GetTicketUseCase>();
+        services.AddScoped<IUpdateTicketUseCase, UpdateTicketUseCase>();
 
         return services;
     }
