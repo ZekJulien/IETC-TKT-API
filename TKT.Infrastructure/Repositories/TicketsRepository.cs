@@ -23,9 +23,9 @@ public class TicketsRepository(IDbSession db) : ITicketsRepository
     {
         const string sql = """
                            INSERT INTO tickets (ticket_id, company_id, title, description, status,
-                                                priority, created_by, assigned_to, category_id, source)
+                                                priority, created_by, assigned_to, category_id, source, due_date)
                            VALUES (@TicketId, @CompanyId, @Title, @Description, @Status,
-                                   @Priority, @CreatedBy, @AssignedTo, @CategoryId, @Source)
+                                   @Priority, @CreatedBy, @AssignedTo, @CategoryId, @Source, @DueDate)
                            RETURNING ticket_number, created_at;
                            """;
         var row = await _db.QuerySingleOrDefaultAsync<TicketCreatedRow>(sql, ticket);

@@ -50,6 +50,7 @@ public sealed class CreateTicketUseCase(
             AssignedTo = input.AssignedTo,
             CategoryId = input.CategoryId,
             Source = source.Value,
+            DueDate = input.DueDate,
         };
 
         var created = await _tickets.CreateAsync(ticket);

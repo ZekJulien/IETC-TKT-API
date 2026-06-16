@@ -1,4 +1,5 @@
 using TKT.Api.Extensions;
+using TKT.Api.Json;
 using TKT.Api.Localization;
 using TKT.Api.Middleware;
 using TKT.Api.Notifications;
@@ -12,6 +13,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddCore();
 builder.Services.AddInfrastructure(builder.Configuration);
+builder.Services.ConfigureHttpJsonOptions(options =>
+    options.SerializerOptions.Converters.Add(new UtcDateTimeOffsetConverter()));
 builder.Services.AddScoped<IInvitationNotifier, InvitationNotifier>();
 builder.Services.AddJwtAuthentication(builder.Configuration);
 builder.Services.AddOpenApi();

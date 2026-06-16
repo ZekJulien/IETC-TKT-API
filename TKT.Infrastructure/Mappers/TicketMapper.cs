@@ -20,6 +20,7 @@ public static class TicketMapper
             AssignedTo = ticket.AssignedTo,
             CategoryId = ticket.CategoryId,
             Source = ticket.Source,
+            DueDate = ticket.DueDate,
         };
 
     public static TicketCreated ToCreated(this TicketCreatedRow row)

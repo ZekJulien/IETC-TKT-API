@@ -8,4 +8,5 @@ public sealed record CreateTicketInput(
     string? Priority,
     Guid? CategoryId,
     Guid? AssignedTo,
-    string? Source);
+    string? Source,
+    DateTimeOffset? DueDate);

@@ -18,4 +18,6 @@ public sealed class CreateTicketRequest
 
     [MaxLength(50)]
     public string? Source { get; set; }
+
+    public DateTimeOffset? DueDate { get; set; }
 }

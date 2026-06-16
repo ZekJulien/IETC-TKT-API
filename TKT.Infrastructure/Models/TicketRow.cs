@@ -13,4 +13,5 @@ public sealed class TicketRow
     public Guid? AssignedTo { get; set; }
     public Guid? CategoryId { get; set; }
     public string Source { get; set; } = string.Empty;
+    public DateTimeOffset? DueDate { get; set; }
 }

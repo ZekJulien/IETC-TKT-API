@@ -16,4 +16,5 @@ public class Ticket
     public Guid? AssignedTo { get; set; }
     public Guid? CategoryId { get; set; }
     public string Source { get; set; } = "web";
+    public DateTimeOffset? DueDate { get; set; }
 }
