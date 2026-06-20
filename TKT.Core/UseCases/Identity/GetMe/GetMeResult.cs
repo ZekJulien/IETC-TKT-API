@@ -6,4 +6,6 @@ public sealed record GetMeResult(
     string Email,
     bool EmailConfirmed,
     bool OnboardingRequired,
+    string? FirstName,
+    string? LastName,
     IReadOnlyList<CompanyMember> Memberships);

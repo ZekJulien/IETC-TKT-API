@@ -39,6 +39,9 @@ public static class DependencyInjection
         services.AddScoped<IAccountRepository, AccountRepository>();
         services.AddScoped<IAccountLockoutRepository, AccountLockoutRepository>();
 
+        services.AddScoped<IProfileGateway, ProfileGateway>();
+        services.AddScoped<IProfileRepository, ProfileRepository>();
+
         services.AddScoped<IRefreshTokenGateway, RefreshTokenGateway>();
         services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
         services.AddScoped<IRefreshTokenReuseRepository, RefreshTokenReuseRepository>();

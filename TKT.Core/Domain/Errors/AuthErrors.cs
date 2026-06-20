@@ -12,4 +12,5 @@ public static class AuthErrors
     public const string AccountLocked = "auth.account.locked";
     public const string EmailNotConfirmed = "auth.email.not_confirmed";
     public const string InvalidCredentials = "auth.invalid_credentials";
+    public const string NameRequired = "auth.name.required";
 }

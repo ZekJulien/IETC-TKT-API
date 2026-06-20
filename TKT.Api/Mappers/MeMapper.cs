@@ -11,6 +11,8 @@ public static class MeMapper
             result.Email,
             result.EmailConfirmed,
             result.OnboardingRequired,
+            result.FirstName,
+            result.LastName,
             result.Memberships.Select(m => new MembershipResponse(m.CompanyId, m.Role)).ToList());
 
     public static MyCompaniesResponse ToResponse(this ListMyCompaniesResult result)

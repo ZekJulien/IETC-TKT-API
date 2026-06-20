@@ -10,7 +10,7 @@ namespace TKT.Api.Mappers;
 public static class AuthMapper
 {
     public static RegisterInput ToInput(this RegisterRequest request)
-        => new(request.Email, request.Password, request.ConfirmPassword);
+        => new(request.Email, request.Password, request.ConfirmPassword, request.FirstName, request.LastName);
 
     public static LoginInput ToInput(this LoginRequest request)
         => new(request.Email, request.Password);
