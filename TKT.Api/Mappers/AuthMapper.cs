@@ -24,12 +24,12 @@ public static class AuthMapper
     public static ConfirmEmailResponse ToResponse(this ConfirmEmailResult result)
         => new(result.AccessToken);
 
-    public static LoginResponse ToResponse(this LoginResult result)
+    public static TokenPairResponse ToResponse(this LoginResult result)
         => new(result.AccessToken, result.RefreshToken);
 
-    public static RefreshResponse ToResponse(this RefreshResult result)
+    public static TokenPairResponse ToResponse(this RefreshResult result)
         => new(result.AccessToken, result.RefreshToken);
 
-    public static SwitchTenantResponse ToResponse(this SwitchTenantResult result)
+    public static TokenPairResponse ToResponse(this SwitchTenantResult result)
         => new(result.AccessToken, result.RefreshToken);
 }
