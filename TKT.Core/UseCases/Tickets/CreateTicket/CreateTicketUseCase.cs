@@ -5,26 +5,27 @@ using TKT.Core.Domain.Errors;
 using TKT.Core.Domain.Exceptions;
 using TKT.Core.Domain.ValueObjects;
 using TKT.Core.IGateways;
+using TKT.Core.Services;
 
 namespace TKT.Core.UseCases.Tickets.CreateTicket;
 
 public sealed class CreateTicketUseCase(
+    ICompanyMemberAuthorizer authorizer,
     ICompanyMembersGateway members,
     ICompanySubscriptionGateway subscriptions,
     ITicketsGateway tickets) : ICreateTicketUseCase
 {
+    private readonly ICompanyMemberAuthorizer _authorizer = authorizer;
     private readonly ICompanyMembersGateway _members = members;
     private readonly ICompanySubscriptionGateway _subscriptions = subscriptions;
     private readonly ITicketsGateway _tickets = tickets;
 
     public async Task<CreateTicketResult> ExecuteAsync(CreateTicketInput input)
     {
-        if (input.CallerCompanyId is not { } companyId)
+        var caller = await _authorizer.ResolveAsync(input.CallerCompanyId, input.CallerAccountId);
+        if (caller is null || !TicketAuthorizationPolicy.CanCreate(caller.Role))
             throw new ForbiddenException(TicketErrors.Forbidden);
-
-        var role = await _members.GetActiveRoleAsync(companyId, input.CallerAccountId);
-        if (!TicketAuthorizationPolicy.CanCreate(role))
-            throw new ForbiddenException(TicketErrors.Forbidden);
+        var companyId = caller.CompanyId;
 
         var title = TicketTitle.Create(input.Title);
         var priority = TicketPriority.CreateOrDefault(input.Priority);

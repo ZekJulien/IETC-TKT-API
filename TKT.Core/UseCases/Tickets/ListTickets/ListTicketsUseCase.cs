@@ -3,11 +3,12 @@ using TKT.Core.Domain.Authorization;
 using TKT.Core.Domain.Errors;
 using TKT.Core.Domain.Exceptions;
 using TKT.Core.IGateways;
+using TKT.Core.Services;
 
 namespace TKT.Core.UseCases.Tickets.ListTickets;
 
 public sealed class ListTicketsUseCase(
-    ICompanyMembersGateway members,
+    ICompanyMemberAuthorizer authorizer,
     ITicketsGateway tickets) : IListTicketsUseCase
 {
     private static readonly HashSet<string> AllowedSorts = new(StringComparer.OrdinalIgnoreCase)
@@ -15,17 +16,16 @@ public sealed class ListTicketsUseCase(
         "created_at", "priority", "status",
     };
 
-    private readonly ICompanyMembersGateway _members = members;
+    private readonly ICompanyMemberAuthorizer _authorizer = authorizer;
     private readonly ITicketsGateway _tickets = tickets;
 
     public async Task<ListTicketsResult> ExecuteAsync(ListTicketsInput input)
     {
-        if (input.CallerCompanyId is not { } companyId)
+        var caller = await _authorizer.ResolveAsync(input.CallerCompanyId, input.CallerAccountId);
+        if (caller is null || !TicketAuthorizationPolicy.CanList(caller.Role))
             throw new ForbiddenException(TicketErrors.Forbidden);
-
-        var role = await _members.GetActiveRoleAsync(companyId, input.CallerAccountId);
-        if (!TicketAuthorizationPolicy.CanList(role))
-            throw new ForbiddenException(TicketErrors.Forbidden);
+        var companyId = caller.CompanyId;
+        var role = caller.Role;
 
         var sort = NormalizeSort(input.Sort);
         var pagination = Pagination.Create(input.Page, input.PageSize);

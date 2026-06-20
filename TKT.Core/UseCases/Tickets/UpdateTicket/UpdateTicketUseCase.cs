@@ -4,24 +4,25 @@ using TKT.Core.Domain.Errors;
 using TKT.Core.Domain.Exceptions;
 using TKT.Core.Domain.ValueObjects;
 using TKT.Core.IGateways;
+using TKT.Core.Services;
 
 namespace TKT.Core.UseCases.Tickets.UpdateTicket;
 
 public sealed class UpdateTicketUseCase(
+    ICompanyMemberAuthorizer authorizer,
     ICompanyMembersGateway members,
     ITicketsGateway tickets) : IUpdateTicketUseCase
 {
+    private readonly ICompanyMemberAuthorizer _authorizer = authorizer;
     private readonly ICompanyMembersGateway _members = members;
     private readonly ITicketsGateway _tickets = tickets;
 
     public async Task<TicketDetail> ExecuteAsync(UpdateTicketInput input)
     {
-        if (input.CallerCompanyId is not { } companyId)
+        var caller = await _authorizer.ResolveAsync(input.CallerCompanyId, input.CallerAccountId);
+        if (caller is null || !TicketAuthorizationPolicy.CanModify(caller.Role))
             throw new ForbiddenException(TicketErrors.Forbidden);
-
-        var role = await _members.GetActiveRoleAsync(companyId, input.CallerAccountId);
-        if (!TicketAuthorizationPolicy.CanModify(role))
-            throw new ForbiddenException(TicketErrors.Forbidden);
+        var companyId = caller.CompanyId;
 
         var current = await _tickets.GetByIdAsync(companyId, input.TicketId);
         if (current is null)

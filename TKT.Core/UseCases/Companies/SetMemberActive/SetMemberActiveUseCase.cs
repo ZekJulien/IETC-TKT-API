@@ -3,22 +3,22 @@ using TKT.Core.Domain.Authorization;
 using TKT.Core.Domain.Errors;
 using TKT.Core.Domain.Exceptions;
 using TKT.Core.IGateways;
+using TKT.Core.Services;
 
 namespace TKT.Core.UseCases.Companies.SetMemberActive;
 
 public sealed class SetMemberActiveUseCase(
+    ICompanyMemberAuthorizer authorizer,
     ICompanyMembersGateway members,
     ICompanySubscriptionGateway subscriptions) : ISetMemberActiveUseCase
 {
+    private readonly ICompanyMemberAuthorizer _authorizer = authorizer;
     private readonly ICompanyMembersGateway _members = members;
     private readonly ICompanySubscriptionGateway _subscriptions = subscriptions;
 
     public async Task<SetMemberActiveResult> ExecuteAsync(SetMemberActiveInput input)
     {
-        if (input.CallerCompanyId != input.CompanyId)
-            throw new ForbiddenException(CompanyErrors.Forbidden);
-
-        var callerRole = await _members.GetActiveRoleAsync(input.CompanyId, input.CallerAccountId);
+        var callerRole = await _authorizer.ResolveForCompanyAsync(input.CallerCompanyId, input.CompanyId, input.CallerAccountId);
         if (!CompanyAccessPolicy.Allows(callerRole, CompanyPermission.SetMemberActive))
             throw new ForbiddenException(CompanyErrors.Forbidden);
 

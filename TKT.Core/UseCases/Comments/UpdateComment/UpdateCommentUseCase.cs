@@ -2,24 +2,23 @@ using TKT.Core.Domain.Errors;
 using TKT.Core.Domain.Exceptions;
 using TKT.Core.Domain.ValueObjects;
 using TKT.Core.IGateways;
+using TKT.Core.Services;
 
 namespace TKT.Core.UseCases.Comments.UpdateComment;
 
 public sealed class UpdateCommentUseCase(
-    ICompanyMembersGateway members,
+    ICompanyMemberAuthorizer authorizer,
     ICommentsGateway comments) : IUpdateCommentUseCase
 {
-    private readonly ICompanyMembersGateway _members = members;
+    private readonly ICompanyMemberAuthorizer _authorizer = authorizer;
     private readonly ICommentsGateway _comments = comments;
 
     public async Task<CommentSummary> ExecuteAsync(UpdateCommentInput input)
     {
-        if (input.CallerCompanyId is not { } companyId)
+        var caller = await _authorizer.ResolveAsync(input.CallerCompanyId, input.CallerAccountId);
+        if (caller is null || caller.Role is null)
             throw new ForbiddenException(CommentErrors.Forbidden);
-
-        var role = await _members.GetActiveRoleAsync(companyId, input.CallerAccountId);
-        if (role is null)
-            throw new ForbiddenException(CommentErrors.Forbidden);
+        var companyId = caller.CompanyId;
 
         var comment = await _comments.GetAsync(companyId, input.CommentId);
         if (comment is null)

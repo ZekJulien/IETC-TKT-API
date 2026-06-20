@@ -4,19 +4,20 @@ using TKT.Core.Domain.Errors;
 using TKT.Core.Domain.Exceptions;
 using TKT.Core.Domain.ValueObjects;
 using TKT.Core.IGateways;
+using TKT.Core.Services;
 
 namespace TKT.Core.UseCases.Companies.ChangeMemberRole;
 
-public sealed class ChangeMemberRoleUseCase(ICompanyMembersGateway members) : IChangeMemberRoleUseCase
+public sealed class ChangeMemberRoleUseCase(
+    ICompanyMemberAuthorizer authorizer,
+    ICompanyMembersGateway members) : IChangeMemberRoleUseCase
 {
+    private readonly ICompanyMemberAuthorizer _authorizer = authorizer;
     private readonly ICompanyMembersGateway _members = members;
 
     public async Task<ChangeMemberRoleResult> ExecuteAsync(ChangeMemberRoleInput input)
     {
-        if (input.CallerCompanyId != input.CompanyId)
-            throw new ForbiddenException(CompanyErrors.Forbidden);
-
-        var callerRole = await _members.GetActiveRoleAsync(input.CompanyId, input.CallerAccountId);
+        var callerRole = await _authorizer.ResolveForCompanyAsync(input.CallerCompanyId, input.CompanyId, input.CallerAccountId);
         if (!CompanyAccessPolicy.Allows(callerRole, CompanyPermission.ChangeMemberRole))
             throw new ForbiddenException(CompanyErrors.Forbidden);
 

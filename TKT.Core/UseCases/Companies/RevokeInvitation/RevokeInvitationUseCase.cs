@@ -2,22 +2,20 @@ using TKT.Core.Domain.Authorization;
 using TKT.Core.Domain.Errors;
 using TKT.Core.Domain.Exceptions;
 using TKT.Core.IGateways;
+using TKT.Core.Services;
 
 namespace TKT.Core.UseCases.Companies.RevokeInvitation;
 
 public sealed class RevokeInvitationUseCase(
-    ICompanyMembersGateway members,
+    ICompanyMemberAuthorizer authorizer,
     ICompanyInvitationGateway invitations) : IRevokeInvitationUseCase
 {
-    private readonly ICompanyMembersGateway _members = members;
+    private readonly ICompanyMemberAuthorizer _authorizer = authorizer;
     private readonly ICompanyInvitationGateway _invitations = invitations;
 
     public async Task ExecuteAsync(RevokeInvitationInput input)
     {
-        if (input.CallerCompanyId != input.CompanyId)
-            throw new ForbiddenException(InvitationErrors.Forbidden);
-
-        var callerRole = await _members.GetActiveRoleAsync(input.CompanyId, input.CallerAccountId);
+        var callerRole = await _authorizer.ResolveForCompanyAsync(input.CallerCompanyId, input.CompanyId, input.CallerAccountId);
         if (!CompanyAccessPolicy.Allows(callerRole, CompanyPermission.InviteMember))
             throw new ForbiddenException(InvitationErrors.Forbidden);
 

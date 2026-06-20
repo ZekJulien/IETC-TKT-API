@@ -38,6 +38,7 @@ public static class DependencyInjection
         services.AddScoped<ISwitchTenantUseCase, SwitchTenantUseCase>();
         services.AddScoped<IAccessTokenIssuer, AccessTokenIssuer>();
         services.AddScoped<IRefreshTokenIssuer, RefreshTokenIssuer>();
+        services.AddScoped<ICompanyMemberAuthorizer, CompanyMemberAuthorizer>();
         services.AddScoped<ICreateCompanyUseCase, CreateCompanyUseCase>();
         services.AddScoped<IJoinInvitationUseCase, JoinInvitationUseCase>();
         services.AddScoped<IInviteMemberUseCase, InviteMemberUseCase>();
