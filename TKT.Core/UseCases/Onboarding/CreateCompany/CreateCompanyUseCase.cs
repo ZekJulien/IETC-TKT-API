@@ -12,14 +12,12 @@ public sealed class CreateCompanyUseCase(
     ICompanyProvisioningGateway companyGateway,
     ICompanyMemberProvisioningGateway memberGateway,
     ITokenService tokenService,
-    IRefreshTokenService refreshTokenService,
-    IRefreshTokenGateway refreshTokenGateway) : ICreateCompanyUseCase
+    IRefreshTokenIssuer refreshTokenIssuer) : ICreateCompanyUseCase
 {
     private readonly ICompanyProvisioningGateway _companyGateway = companyGateway;
     private readonly ICompanyMemberProvisioningGateway _memberGateway = memberGateway;
     private readonly ITokenService _tokenService = tokenService;
-    private readonly IRefreshTokenService _refreshTokenService = refreshTokenService;
-    private readonly IRefreshTokenGateway _refreshTokenGateway = refreshTokenGateway;
+    private readonly IRefreshTokenIssuer _refreshTokenIssuer = refreshTokenIssuer;
 
     public async Task<CreateCompanyResult> ExecuteAsync(CreateCompanyInput input)
     {
@@ -49,17 +47,8 @@ public sealed class CreateCompanyUseCase(
         await _memberGateway.AddMemberAsync(owner);
 
         var accessToken = _tokenService.GenerateAccessToken(input.AccountId, input.Email, company.CompanyId, owner.Role);
-        var refresh = _refreshTokenService.Generate(input.AccountId, company.CompanyId);
-        await _refreshTokenGateway.AddAsync(new RefreshToken
-        {
-            TokenId = Guid.CreateVersion7(),
-            AccountId = input.AccountId,
-            FamilyId = Guid.CreateVersion7(),
-            TokenHash = refresh.TokenHash,
-            ExpiresAt = refresh.ExpiresAt,
-            AbsoluteExpiresAt = refresh.AbsoluteExpiresAt,
-        });
+        var refreshToken = await _refreshTokenIssuer.IssueAsync(input.AccountId, company.CompanyId);
 
-        return new CreateCompanyResult(company.CompanyId, company.Name, company.Slug, owner.Role, accessToken, refresh.Token);
+        return new CreateCompanyResult(company.CompanyId, company.Name, company.Slug, owner.Role, accessToken, refreshToken);
     }
 }

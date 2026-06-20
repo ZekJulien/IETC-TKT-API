@@ -10,14 +10,12 @@ public sealed class JoinInvitationUseCase(
     IInvitationGateway invitationGateway,
     ICompanyMemberProvisioningGateway memberGateway,
     ITokenService tokenService,
-    IRefreshTokenService refreshTokenService,
-    IRefreshTokenGateway refreshTokenGateway) : IJoinInvitationUseCase
+    IRefreshTokenIssuer refreshTokenIssuer) : IJoinInvitationUseCase
 {
     private readonly IInvitationGateway _invitationGateway = invitationGateway;
     private readonly ICompanyMemberProvisioningGateway _memberGateway = memberGateway;
     private readonly ITokenService _tokenService = tokenService;
-    private readonly IRefreshTokenService _refreshTokenService = refreshTokenService;
-    private readonly IRefreshTokenGateway _refreshTokenGateway = refreshTokenGateway;
+    private readonly IRefreshTokenIssuer _refreshTokenIssuer = refreshTokenIssuer;
 
     public async Task<JoinInvitationResult> ExecuteAsync(JoinInvitationInput input)
     {
@@ -45,17 +43,8 @@ public sealed class JoinInvitationUseCase(
         await _invitationGateway.MarkAcceptedAsync(invitation.InvitationId, input.AccountId);
 
         var accessToken = _tokenService.GenerateAccessToken(input.AccountId, input.Email, invitation.CompanyId, invitation.Role);
-        var refresh = _refreshTokenService.Generate(input.AccountId, invitation.CompanyId);
-        await _refreshTokenGateway.AddAsync(new RefreshToken
-        {
-            TokenId = Guid.CreateVersion7(),
-            AccountId = input.AccountId,
-            FamilyId = Guid.CreateVersion7(),
-            TokenHash = refresh.TokenHash,
-            ExpiresAt = refresh.ExpiresAt,
-            AbsoluteExpiresAt = refresh.AbsoluteExpiresAt,
-        });
+        var refreshToken = await _refreshTokenIssuer.IssueAsync(input.AccountId, invitation.CompanyId);
 
-        return new JoinInvitationResult(invitation.CompanyId, invitation.Role, accessToken, refresh.Token);
+        return new JoinInvitationResult(invitation.CompanyId, invitation.Role, accessToken, refreshToken);
     }
 }

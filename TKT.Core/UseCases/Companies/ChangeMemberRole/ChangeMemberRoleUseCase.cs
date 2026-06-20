@@ -25,8 +25,7 @@ public sealed class ChangeMemberRoleUseCase(ICompanyMembersGateway members) : IC
         var target = await _members.GetMemberAsync(input.CompanyId, input.TargetAccountId)
             ?? throw new NotFoundException(CompanyErrors.MemberNotFound);
 
-        if (target.Role == CompanyRoles.Owner && await _members.CountActiveOwnersAsync(input.CompanyId) <= 1)
-            throw new ConflictException(CompanyErrors.LastOwner);
+        CompanyOwnershipPolicy.EnsureNotLastOwner(target.Role, await _members.CountActiveOwnersAsync(input.CompanyId));
 
         await _members.UpdateRoleAsync(input.CompanyId, input.TargetAccountId, newRole.Value);
         return new ChangeMemberRoleResult(input.TargetAccountId, newRole.Value);

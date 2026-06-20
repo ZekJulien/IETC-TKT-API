@@ -27,8 +27,7 @@ public sealed class SetMemberActiveUseCase(
 
         if (!input.IsActive && target.IsActive)
         {
-            if (target.Role == CompanyRoles.Owner && await _members.CountActiveOwnersAsync(input.CompanyId) <= 1)
-                throw new ConflictException(CompanyErrors.LastOwner);
+            CompanyOwnershipPolicy.EnsureNotLastOwner(target.Role, await _members.CountActiveOwnersAsync(input.CompanyId));
         }
         else if (input.IsActive && !target.IsActive)
         {

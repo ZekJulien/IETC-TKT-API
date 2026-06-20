@@ -1,4 +1,5 @@
 using Microsoft.Extensions.DependencyInjection;
+using TKT.Core.Abstractions;
 using TKT.Core.UseCases.Identity.GetMe;
 using TKT.Core.UseCases.Identity.ListMyCompanies;
 using TKT.Core.UseCases.Auth.ConfirmEmail;
@@ -36,6 +37,7 @@ public static class DependencyInjection
         services.AddScoped<IRefreshUseCase, RefreshUseCase>();
         services.AddScoped<ISwitchTenantUseCase, SwitchTenantUseCase>();
         services.AddScoped<IAccessTokenIssuer, AccessTokenIssuer>();
+        services.AddScoped<IRefreshTokenIssuer, RefreshTokenIssuer>();
         services.AddScoped<ICreateCompanyUseCase, CreateCompanyUseCase>();
         services.AddScoped<IJoinInvitationUseCase, JoinInvitationUseCase>();
         services.AddScoped<IInviteMemberUseCase, InviteMemberUseCase>();

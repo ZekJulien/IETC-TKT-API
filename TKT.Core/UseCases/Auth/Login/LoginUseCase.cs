@@ -13,8 +13,7 @@ public sealed class LoginUseCase(
     ISessionContextGateway sessionContextGateway,
     IPasswordHasher passwordHasher,
     IAccessTokenIssuer accessTokenIssuer,
-    IRefreshTokenService refreshTokenService,
-    IRefreshTokenGateway refreshTokenGateway) : ILoginUseCase
+    IRefreshTokenIssuer refreshTokenIssuer) : ILoginUseCase
 {
     private const int MaxFailedAttempts = 5;
     private static readonly TimeSpan LockoutDuration = TimeSpan.FromMinutes(15);
@@ -23,8 +22,7 @@ public sealed class LoginUseCase(
     private readonly ISessionContextGateway _sessionContextGateway = sessionContextGateway;
     private readonly IPasswordHasher _passwordHasher = passwordHasher;
     private readonly IAccessTokenIssuer _accessTokenIssuer = accessTokenIssuer;
-    private readonly IRefreshTokenService _refreshTokenService = refreshTokenService;
-    private readonly IRefreshTokenGateway _refreshTokenGateway = refreshTokenGateway;
+    private readonly IRefreshTokenIssuer _refreshTokenIssuer = refreshTokenIssuer;
 
     public async Task<LoginResult> ExecuteAsync(LoginInput input)
     {
@@ -47,21 +45,11 @@ public sealed class LoginUseCase(
         await _sessionContextGateway.SetCurrentUserAsync(account.AccountId);
 
         var accessToken = await _accessTokenIssuer.IssueForAsync(account.AccountId, account.Email);
-
-        var refresh = _refreshTokenService.Generate(account.AccountId);
-        await _refreshTokenGateway.AddAsync(new RefreshToken
-        {
-            TokenId = Guid.CreateVersion7(),
-            AccountId = account.AccountId,
-            FamilyId = Guid.CreateVersion7(),
-            TokenHash = refresh.TokenHash,
-            ExpiresAt = refresh.ExpiresAt,
-            AbsoluteExpiresAt = refresh.AbsoluteExpiresAt,
-        });
+        var refreshToken = await _refreshTokenIssuer.IssueAsync(account.AccountId);
 
         await _accountGateway.ResetLockoutAsync(account.AccountId);
 
-        return new LoginResult(accessToken, refresh.Token);
+        return new LoginResult(accessToken, refreshToken);
     }
 
     private static bool IsLockedOut(Account account)
