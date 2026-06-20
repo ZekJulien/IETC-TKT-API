@@ -23,12 +23,15 @@ public static class TicketRouter
         });
 
         group.MapGet("", async (ClaimsPrincipal user, IListTicketsUseCase useCase,
-            string? status, string? priority, Guid? assignedTo, Guid? categoryId,
+            string? status, string? priority, string? assignedTo, Guid? categoryId,
             string? sort, int? page, int? pageSize) =>
         {
+            var unassignedOnly = string.Equals(assignedTo, "unassigned", StringComparison.OrdinalIgnoreCase);
+            Guid? assigneeId = !unassignedOnly && Guid.TryParse(assignedTo, out var id) ? id : null;
+
             var input = new ListTicketsInput(
                 user.GetCompanyId(), user.GetAccountId(),
-                status, priority, assignedTo, categoryId, sort,
+                status, priority, assigneeId, unassignedOnly, categoryId, sort,
                 page ?? 1, pageSize ?? 20);
             var result = await useCase.ExecuteAsync(input);
             return Results.Ok(result.ToResponse());

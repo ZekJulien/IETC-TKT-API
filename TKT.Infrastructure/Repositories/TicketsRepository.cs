@@ -15,6 +15,7 @@ public class TicketsRepository(IDbSession db) : ITicketsRepository
                                        AND (@Status::text IS NULL OR status = @Status)
                                        AND (@Priority::text IS NULL OR priority = @Priority)
                                        AND (@AssignedTo::uuid IS NULL OR assigned_to = @AssignedTo)
+                                       AND (@UnassignedOnly = FALSE OR assigned_to IS NULL)
                                        AND (@CategoryId::uuid IS NULL OR category_id = @CategoryId)
                                        AND (@RestrictToOwn = FALSE OR created_by = @CurrentUserId)
                                      """;
@@ -78,6 +79,7 @@ public class TicketsRepository(IDbSession db) : ITicketsRepository
                              AND deleted_at IS NULL
                              AND (@Priority::text IS NULL OR priority = @Priority)
                              AND (@AssignedTo::uuid IS NULL OR assigned_to = @AssignedTo)
+                             AND (@UnassignedOnly = FALSE OR assigned_to IS NULL)
                              AND (@CategoryId::uuid IS NULL OR category_id = @CategoryId)
                              AND (@RestrictToOwn = FALSE OR created_by = @CurrentUserId)
                            GROUP BY status;

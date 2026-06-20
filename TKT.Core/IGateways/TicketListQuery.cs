@@ -7,6 +7,7 @@ public sealed record TicketListQuery(
     string? Status,
     string? Priority,
     Guid? AssignedTo,
+    bool UnassignedOnly,
     Guid? CategoryId,
     string Sort,
     int Page,

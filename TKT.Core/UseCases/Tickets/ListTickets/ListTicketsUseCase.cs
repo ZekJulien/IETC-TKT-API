@@ -37,6 +37,7 @@ public sealed class ListTicketsUseCase(
             NormalizeFilter(input.Status),
             NormalizeFilter(input.Priority),
             input.AssignedTo,
+            input.UnassignedOnly,
             input.CategoryId,
             sort,
             pagination.Page,

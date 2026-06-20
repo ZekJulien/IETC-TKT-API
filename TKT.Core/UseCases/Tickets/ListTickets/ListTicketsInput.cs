@@ -6,6 +6,7 @@ public sealed record ListTicketsInput(
     string? Status,
     string? Priority,
     Guid? AssignedTo,
+    bool UnassignedOnly,
     Guid? CategoryId,
     string? Sort,
     int Page,
