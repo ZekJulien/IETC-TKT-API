@@ -32,6 +32,12 @@ public class TicketsGateway(ITicketsRepository repository) : ITicketsGateway
         return rows.Select(r => r.ToStatusCount()).ToList();
     }
 
+    public async Task<TicketStats> GetStatsAsync(Guid companyId, Guid currentUserId, bool restrictToOwn)
+    {
+        var row = await _repository.GetStatsAsync(companyId, currentUserId, restrictToOwn);
+        return row.ToStats();
+    }
+
     public async Task<TicketDetail?> GetByIdAsync(Guid companyId, Guid ticketId)
     {
         var row = await _repository.GetByIdAsync(companyId, ticketId);

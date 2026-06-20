@@ -10,6 +10,7 @@ public interface ITicketsRepository
     Task<IReadOnlyList<TicketSummaryRow>> ListAsync(TicketListQuery query);
     Task<int> CountAsync(TicketListQuery query);
     Task<IReadOnlyList<StatusCountRow>> CountByStatusAsync(TicketListQuery query);
+    Task<TicketStatsRow> GetStatsAsync(Guid companyId, Guid currentUserId, bool restrictToOwn);
     Task<TicketDetailRow?> GetByIdAsync(Guid companyId, Guid ticketId);
     Task<TicketDetailRow?> UpdateAsync(TicketUpdate update);
 }

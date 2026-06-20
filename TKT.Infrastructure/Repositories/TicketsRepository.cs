@@ -85,6 +85,28 @@ public class TicketsRepository(IDbSession db) : ITicketsRepository
         return _db.QueryAsync<StatusCountRow>(sql, query);
     }
 
+    public async Task<TicketStatsRow> GetStatsAsync(Guid companyId, Guid currentUserId, bool restrictToOwn)
+    {
+        const string sql = """
+                           SELECT
+                               COUNT(*)::int AS total,
+                               COUNT(*) FILTER (WHERE status = 'open')::int AS open,
+                               COUNT(*) FILTER (WHERE status = 'in_progress')::int AS in_progress,
+                               COUNT(*) FILTER (WHERE status = 'pending')::int AS pending,
+                               COUNT(*) FILTER (WHERE status = 'resolved')::int AS resolved,
+                               COUNT(*) FILTER (WHERE status = 'closed')::int AS closed,
+                               COUNT(*) FILTER (WHERE assigned_to IS NULL
+                                                  AND status NOT IN ('resolved', 'closed'))::int AS unassigned
+                           FROM tickets
+                           WHERE company_id = @CompanyId
+                             AND deleted_at IS NULL
+                             AND (@RestrictToOwn = FALSE OR created_by = @CurrentUserId);
+                           """;
+        var row = await _db.QuerySingleOrDefaultAsync<TicketStatsRow>(sql,
+            new { CompanyId = companyId, CurrentUserId = currentUserId, RestrictToOwn = restrictToOwn });
+        return row ?? new TicketStatsRow();
+    }
+
     public Task<TicketDetailRow?> GetByIdAsync(Guid companyId, Guid ticketId)
     {
         const string sql = """
