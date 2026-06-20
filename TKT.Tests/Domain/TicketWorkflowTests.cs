@@ -35,4 +35,42 @@ public class TicketWorkflowTests
     [InlineData("", false)]
     public void IsKnownStatus_ChecksAgainstWorkflow(string status, bool expected)
         => Assert.Equal(expected, TicketWorkflow.IsKnownStatus(status));
+
+    [Fact]
+    public void NextStatusOnComment_StaffPublicOnInProgress_GoesPending()
+        => Assert.Equal(TicketStatuses.Pending,
+            TicketWorkflow.NextStatusOnComment(TicketStatuses.InProgress, authorIsStaff: true, isInternal: false));
+
+    [Fact]
+    public void NextStatusOnComment_RequesterPublicOnPending_GoesInProgress()
+        => Assert.Equal(TicketStatuses.InProgress,
+            TicketWorkflow.NextStatusOnComment(TicketStatuses.Pending, authorIsStaff: false, isInternal: false));
+
+    [Theory]
+    [InlineData(TicketStatuses.InProgress, true)]
+    [InlineData(TicketStatuses.Pending, false)]
+    public void NextStatusOnComment_InternalComment_NeverChangesStatus(string current, bool authorIsStaff)
+        => Assert.Null(TicketWorkflow.NextStatusOnComment(current, authorIsStaff, isInternal: true));
+
+    [Theory]
+    [InlineData(TicketStatuses.InProgress, false)]
+    [InlineData(TicketStatuses.Pending, true)]
+    [InlineData(TicketStatuses.Open, true)]
+    [InlineData(TicketStatuses.Open, false)]
+    [InlineData(TicketStatuses.Resolved, true)]
+    [InlineData(TicketStatuses.Closed, false)]
+    public void NextStatusOnComment_NoPingPongCase_ReturnsNull(string current, bool authorIsStaff)
+        => Assert.Null(TicketWorkflow.NextStatusOnComment(current, authorIsStaff, isInternal: false));
+
+    [Fact]
+    public void NextStatusOnAssignment_OpenTicket_GoesInProgress()
+        => Assert.Equal(TicketStatuses.InProgress, TicketWorkflow.NextStatusOnAssignment(TicketStatuses.Open));
+
+    [Theory]
+    [InlineData(TicketStatuses.InProgress)]
+    [InlineData(TicketStatuses.Pending)]
+    [InlineData(TicketStatuses.Resolved)]
+    [InlineData(TicketStatuses.Closed)]
+    public void NextStatusOnAssignment_NonOpenTicket_ReturnsNull(string current)
+        => Assert.Null(TicketWorkflow.NextStatusOnAssignment(current));
 }

@@ -31,6 +31,9 @@ public static class TicketAuthorizationPolicy
     public static bool CanViewInternal(string? role)
         => role is not null && CanModifyRoles.Contains(role);
 
+    public static bool IsStaff(string? role)
+        => role is not null && CanModifyRoles.Contains(role);
+
     public static bool CanList(string? role)
         => role is not null;
 

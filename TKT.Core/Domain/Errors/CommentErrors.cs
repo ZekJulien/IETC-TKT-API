@@ -6,4 +6,5 @@ public static class CommentErrors
     public const string TextInvalid = "comment.text_invalid";
     public const string ReplyInvalid = "comment.reply_invalid";
     public const string Forbidden = "comment.forbidden";
+    public const string TicketUnassigned = "comment.ticket_unassigned";
 }

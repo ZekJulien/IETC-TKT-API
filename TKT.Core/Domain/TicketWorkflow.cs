@@ -16,4 +16,20 @@ public static class TicketWorkflow
 
     public static bool CanTransition(string from, string to)
         => from == to || (Transitions.TryGetValue(from, out var allowed) && allowed.Contains(to));
+
+    public static string? NextStatusOnComment(string currentStatus, bool authorIsStaff, bool isInternal)
+    {
+        if (isInternal)
+            return null;
+
+        return (currentStatus, authorIsStaff) switch
+        {
+            (TicketStatuses.InProgress, true) => TicketStatuses.Pending,
+            (TicketStatuses.Pending, false) => TicketStatuses.InProgress,
+            _ => null,
+        };
+    }
+
+    public static string? NextStatusOnAssignment(string currentStatus)
+        => currentStatus == TicketStatuses.Open ? TicketStatuses.InProgress : null;
 }

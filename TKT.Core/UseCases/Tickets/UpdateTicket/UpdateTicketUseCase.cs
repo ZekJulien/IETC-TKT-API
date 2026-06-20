@@ -34,6 +34,9 @@ public sealed class UpdateTicketUseCase(
             !TicketAuthorizationPolicy.CanBeAssigned(await _members.GetActiveRoleAsync(companyId, assigneeId)))
             throw new ValidationException(TicketErrors.AssigneeInvalid);
 
+        if (status is null && input.AssignedTo is not null)
+            status = TicketWorkflow.NextStatusOnAssignment(current.Status);
+
         var update = new TicketUpdate(companyId, input.TicketId, status, priority,
             input.AssignedTo, input.CategoryId, input.DueDate);
 
