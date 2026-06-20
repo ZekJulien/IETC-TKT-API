@@ -5,6 +5,7 @@ public sealed record MemberListResponse(
     int Total,
     int Page,
     int PageSize,
+    int TotalPages,
     int ActiveMembers,
     int PendingInvitations,
     int MaxUsers);

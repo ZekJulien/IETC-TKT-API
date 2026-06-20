@@ -39,6 +39,7 @@ public static class CompanyMembersMapper
             result.Members.Total,
             result.Members.Page,
             result.Members.PageSize,
+            result.Members.PageSize > 0 ? (int)Math.Ceiling((double)result.Members.Total / result.Members.PageSize) : 0,
             result.ActiveMembers,
             result.PendingInvitations,
             result.MaxUsers);
