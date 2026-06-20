@@ -19,21 +19,10 @@ public class CompanyMembersRepository(IDbSession db) : ICompanyMembersRepository
     }
 
     public Task<bool> MemberExistsAsync(Guid companyId, Guid accountId)
-    {
-        const string sql = "SELECT EXISTS(SELECT 1 FROM company_members WHERE company_id = @CompanyId AND account_id = @AccountId);";
-        return _db.ExecuteScalarAsync<bool>(sql, new { CompanyId = companyId, AccountId = accountId });
-    }
+        => _db.ExecuteScalarAsync<bool>(CompanyMemberSql.MemberExists, new { CompanyId = companyId, AccountId = accountId });
 
     public Task AddMemberAsync(CompanyMemberRow member)
-    {
-        const string sql = """
-                           INSERT INTO company_members (membership_id, company_id, account_id, role,
-                                                        invited_by, department, job_title, joined_at)
-                           VALUES (@MembershipId, @CompanyId, @AccountId, @Role,
-                                   @InvitedBy, @Department, @JobTitle, @JoinedAt);
-                           """;
-        return _db.ExecuteAsync(sql, member);
-    }
+        => _db.ExecuteAsync(CompanyMemberSql.Insert, member);
 
     public Task<int> CountActiveMembersAsync(Guid companyId)
     {
