@@ -3,7 +3,7 @@
 API REST du projet **TKT** — un système de **ticketing multi-tenant** (helpdesk interne) en C# / **ASP.NET Core (.NET 10)**, structuré en **Clean Architecture** avec **Dapper** et **PostgreSQL 18**.
 
 > Cours « Projet de développement web » — BAC 2, Bachelier en Informatique : orientation développement d'applications.
-> **Frontend Angular** : dépôt séparé **`IETC-TKT-WEB`** (Angular 21, consomme cette API).
+> **Frontend Angular** : dépôt séparé [`IETC-TKT-WEB`](https://github.com/ZekJulien/IETC-TKT-WEB) (Angular 21, consomme cette API).
 
 ---
 
@@ -72,8 +72,8 @@ HTTP
 **2. Erreurs métier → HTTP**
 Les use cases lèvent des exceptions de domaine (`NotFoundException`, `ValidationException`, `ConflictException`, `ForbiddenException`) ; `ExceptionHandlingMiddleware` les traduit en 400/401/403/404/409. Aucun `try/catch` dans les endpoints.
 
-**3. Transaction par requête (Unit of Work)**
-`DbSession` (Scoped) ouvre une connexion + une transaction par requête (lazy). `TransactionMiddleware` **commit** en cas de succès, **rollback** sur exception → chaque requête est atomique. Le contexte tenant (`SET LOCAL app.current_user_id` / `app.current_company_id`) est posé ici pour la RLS et l'audit.
+**3. Transaction par requête (`IRequestTransaction`)**
+`DbSession` (Scoped) ouvre une connexion + une transaction par requête (lazy). `TransactionMiddleware` **commit** en cas de succès, **rollback** sur exception, via le port `IRequestTransaction` (le host dépend de l'abstraction, pas du concret). Une requête **mono-session** est donc atomique. *(Pas un « Unit of Work » strict : `app_user` et `app_system` sont **deux connexions** distinctes → pas d'atomicité entre elles, best-effort séquentiel ; ce cas ne survient qu'à l'onboarding et son échec y est bénin.)* Le contexte tenant (`SET LOCAL app.current_user_id` / `app.current_company_id`) est posé ici pour la RLS et l'audit.
 
 **4. Privacy by design (RGPD)**
 Le schéma sépare l'authentification (`accounts`, zéro PII) des données personnelles (`user_profiles`, PII) → effacement, minimisation, rétention différenciée.
@@ -122,7 +122,7 @@ Points notables : FK composites `(entity_id, company_id)` pour l'intégrité ten
 
 Prérequis : **Docker**. (L'option B ajoute le **.NET 10 SDK**.) Application sur **http://localhost:8080**, API sur **http://localhost:5083**.
 
-Le schéma, les rôles et les **comptes de démo** sont **cuits dans l'image DB** → tout s'initialise au premier démarrage. Mot de passe commun des comptes : **`Demo1234`**.
+Le schéma, les rôles et les **comptes de démo** sont **embarqués dans l'image DB** → tout s'initialise au premier démarrage. Mot de passe commun des comptes : **`Demo1234`**.
 
 ### Sans rien cloner — toute la stack en une commande
 
@@ -152,7 +152,7 @@ docker compose -f docker-compose.ghcr.yml up
 Pour développer le backend (rechargement, debug, tests) :
 
 ```bash
-docker compose -f docker-compose.ghcr.yml up -d db   # la base seule (image pre-seedee, sans API ni web)
+docker compose -f docker-compose.ghcr.yml up -d db   # la base seule (image pre-initialisee, sans API ni web)
 dotnet run --project TKT.Api                          # API sur http://localhost:5083
 ```
 
@@ -180,11 +180,11 @@ Chargés automatiquement par `Database/seed.sql`. **Mot de passe commun : `Demo1
 | `nadia@acme.test` | Nadia Haddad | **member chez Acme + agent chez Globex** — *multi-tenant* |
 | `owner@globex.test` | Sophie Laurent | owner (Globex) |
 
-Le seed contient 2 entreprises (Acme en plan **Pro**, Globex en **Free**), des tickets dans tous les statuts (assignés et non assignés), des commentaires publics/internes et des tags.
+Le jeu de démo contient 2 entreprises (Acme en plan **Pro**, Globex en **Free**), des tickets dans tous les statuts (assignés et non assignés), des commentaires publics/internes et des tags.
 
 **Multi-tenant** : un compte membre de plusieurs entreprises (`owner@acme.test`, `nadia@acme.test`) doit choisir son tenant actif via `POST /api/auth/switch-tenant` `{ "companyId": "..." }` ; le token renvoyé porte alors le contexte de l'entreprise.
 
-> **Compte créé manuellement** : l'envoi d'email est simulé en dev (`ConsoleEmailSender`). Le lien de confirmation (`GET /api/auth/confirm-email?token=...`) est **affiché dans la console de l'API**. Les comptes de démo ci-dessus évitent cette étape.
+> **Compte créé manuellement** : l'envoi d'email est simulé en dev (`ConsoleEmailSender`). Le **token** de confirmation est **affiché dans la console de l'API** (ligne `activation : <token>`) ; confirme-le ensuite via `GET /api/auth/confirm-email?token=<token>`. Les comptes de démo ci-dessus évitent cette étape.
 
 ---
 
