@@ -118,76 +118,50 @@ Points notables : FK composites `(entity_id, company_id)` pour l'intégrité ten
 
 ---
 
-## Méthode A — Docker, prêt à l'emploi (recommandé)
+## Démarrage
 
-Toute la stack (PostgreSQL + API + frontend Angular) démarre avec **une seule commande**. Application sur **http://localhost:8080**, API sur **http://localhost:5083**. Prérequis : **Docker** uniquement.
+Prérequis : **Docker**. (L'option B ajoute le **.NET 10 SDK**.) Application sur **http://localhost:8080**, API sur **http://localhost:5083**.
 
-### A.1 — Build depuis le code source (archive ZIP / dépôt local)
+Le schéma, les rôles et les **comptes de démo** sont **cuits dans l'image DB** → tout s'initialise au premier démarrage. Mot de passe commun des comptes : **`Demo1234`**.
 
-Les deux dépôts doivent être côte à côte :
+### Sans rien cloner — toute la stack en une commande
 
-```
-<dossier-parent>/
-├── IETC-TKT-API/   ← exécuter la commande ici
-└── IETC-TKT-WEB/
-```
+Le compose est tiré directement de GitHub, les images de `ghcr.io` : rien à cloner, rien à builder, juste Docker.
 
 ```bash
-docker compose -f docker-compose.full.yml up --build
+curl -fsSL https://raw.githubusercontent.com/ZekJulien/IETC-TKT-API/main/docker-compose.ghcr.yml | docker compose -p tkt -f - up
 ```
 
-Construit l'API (.NET 10) et le front (Angular 21), lance PostgreSQL 18 et charge le schéma + les **comptes de démo**.
+> Arrêter / repartir propre : remplacer `up` par `down -v` dans la commande ci-dessus.
 
-### A.2 — Images pré-construites (GitHub Container Registry, aucun build)
+### Depuis le dépôt cloné
 
-Aucun code source du frontend requis : les images publiques sont tirées de `ghcr.io`. Depuis le dépôt `IETC-TKT-API` (qui contient les scripts SQL) :
+```bash
+git clone https://github.com/ZekJulien/IETC-TKT-API.git
+cd IETC-TKT-API
+```
+
+**Option A — toute l'application dans Docker**
 
 ```bash
 docker compose -f docker-compose.ghcr.yml up
 ```
 
-Images : `ghcr.io/zekjulien/ietc-tkt-api` et `ghcr.io/zekjulien/ietc-tkt-web`.
+**Option B — base dans Docker + API en local (`dotnet run`)**
 
-> Repartir d'une base propre : ajouter `down -v` (ex. `docker compose -f docker-compose.full.yml down -v`).
-> Comptes de démo : voir « Comptes de démo » plus bas. Mot de passe commun **`Demo1234`**.
+Pour développer le backend (rechargement, debug, tests) :
 
----
-
-## Méthode B — Lancement manuel (étape par étape)
-
-Sans Docker tout-en-un. Pour le développement et la modification de code en direct.
-
-### Prérequis
-- **.NET 10 SDK**
-- **Docker** (lance PostgreSQL 18 + initialise tout) — ou un PostgreSQL 18 local
-
-### 1. Base de données (Docker)
 ```bash
-cp .env.example .env          # ajuste les mots de passe si besoin
-docker compose up -d
+docker compose -f docker-compose.ghcr.yml up -d db   # la base seule (image pre-seedee, sans API ni web)
+dotnet run --project TKT.Api                          # API sur http://localhost:5083
 ```
-Au **premier démarrage** (volume vide), le conteneur exécute dans l'ordre :
-1. `Database/tkt.sql` — schéma complet + rôles `app_user` / `app_system`
-2. `Database/dev-credentials.sh` — mots de passe des rôles (depuis `.env`)
-3. `Database/seed.sql` — **données de démonstration** (voir « Comptes de démo »)
 
-> Pour repartir d'une base propre : `docker compose down -v && docker compose up -d`.
+- Doc Scalar (dev) : http://localhost:5083/scalar · OpenAPI : http://localhost:5083/openapi/v1.json · Tests : `dotnet test`
+- **Config** : connection string de dev dans `TKT.Api/appsettings.Development.json` (`app_user` / `app_user_dev`, aligné sur les valeurs par défaut du conteneur). En Docker, elle est **surchargée nativement par variable d'environnement** (`ConnectionStrings__DefaultConnection`) — aucun secret en dur au runtime.
 
-### 2. Configuration
-La connection string de dev est dans `TKT.Api/appsettings.Development.json` (base `ticketing_system`, user `app_user`). Les mots de passe du conteneur viennent du `.env` (gitignoré ; voir `.env.example`).
-
-### 3. Lancer l'API
-```bash
-dotnet run --project TKT.Api
-```
-- API : `http://localhost:5083`
-- Doc Scalar (dev) : `http://localhost:5083/scalar`
-- OpenAPI JSON : `http://localhost:5083/openapi/v1.json`
-
-### 4. Tests
-```bash
-dotnet test
-```
+> **Base propre** (depuis le dépôt) : `docker compose -f docker-compose.ghcr.yml down -v`.
+> **Surcharger** ports / mots de passe : un `.env` optionnel (voir `.env.example`).
+> Schéma **figé** (`Database/tkt.sql`) : si tu le modifies, reconstruis l'image DB — `docker build -t ghcr.io/zekjulien/ietc-tkt-db:latest ./Database`.
 
 ---
 
