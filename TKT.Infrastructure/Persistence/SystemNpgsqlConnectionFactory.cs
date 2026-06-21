@@ -1,3 +1,4 @@
+using TKT.Infrastructure.Persistence.Abstractions;
 using System.Data;
 using Microsoft.Extensions.Configuration;
 using Npgsql;

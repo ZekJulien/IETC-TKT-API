@@ -1,6 +1,6 @@
 using System.Data;
 
-namespace TKT.Infrastructure.Persistence;
+namespace TKT.Infrastructure.Persistence.Abstractions;
 
 public interface ISystemDbConnectionFactory
 {

@@ -1,7 +1,7 @@
 using TKT.Infrastructure.Persistence;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using TKT.Infrastructure.Abstractions;
+using TKT.Infrastructure.Persistence.Abstractions;
 using TKT.Infrastructure.Security;
 using TKT.Infrastructure.Email;
 using TKT.Infrastructure.Gateways;
@@ -27,6 +27,7 @@ public static class DependencyInjection
         services.AddScoped<IDbSession>(sp => sp.GetRequiredService<DbSession>());
         services.AddScoped<SystemDbSession>();
         services.AddScoped<ISystemDbSession>(sp => sp.GetRequiredService<SystemDbSession>());
+        services.AddScoped<IRequestTransaction, RequestTransaction>();
         services.AddScoped<IRequestContext, RequestContext>();
         services.AddScoped<ITenantContext, TenantContext>();
 

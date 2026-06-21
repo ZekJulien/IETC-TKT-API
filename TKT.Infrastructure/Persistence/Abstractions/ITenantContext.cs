@@ -1,4 +1,4 @@
-namespace TKT.Infrastructure.Abstractions;
+namespace TKT.Infrastructure.Persistence.Abstractions;
 
 public interface ITenantContext
 {

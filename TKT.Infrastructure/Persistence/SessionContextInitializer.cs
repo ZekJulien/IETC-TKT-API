@@ -1,6 +1,6 @@
 using System.Data.Common;
 using Dapper;
-using TKT.Infrastructure.Abstractions;
+using TKT.Infrastructure.Persistence.Abstractions;
 
 namespace TKT.Infrastructure.Persistence;
 

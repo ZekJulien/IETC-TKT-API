@@ -1,4 +1,4 @@
-using TKT.Infrastructure.Persistence;
+using TKT.Infrastructure.Persistence.Abstractions;
 
 namespace TKT.Api.Middleware;
 
@@ -8,18 +8,16 @@ public sealed class TransactionMiddleware
 
     public TransactionMiddleware(RequestDelegate next) => _next = next;
 
-    public async Task InvokeAsync(HttpContext context, DbSession session, SystemDbSession systemSession)
+    public async Task InvokeAsync(HttpContext context, IRequestTransaction transaction)
     {
         try
         {
             await _next(context);
-            await session.CommitAsync();
-            await systemSession.CommitAsync();
+            await transaction.CommitAsync();
         }
         catch
         {
-            await session.RollbackAsync();
-            await systemSession.RollbackAsync();
+            await transaction.RollbackAsync();
             throw;
         }
     }

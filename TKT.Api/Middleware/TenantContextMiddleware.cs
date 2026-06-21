@@ -1,5 +1,5 @@
 using System.Security.Claims;
-using TKT.Infrastructure.Abstractions;
+using TKT.Infrastructure.Persistence.Abstractions;
 using TKT.Infrastructure.Security;
 
 namespace TKT.Api.Middleware;

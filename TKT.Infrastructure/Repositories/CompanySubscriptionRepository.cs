@@ -1,4 +1,4 @@
-using TKT.Infrastructure.Persistence;
+using TKT.Infrastructure.Persistence.Abstractions;
 using TKT.Infrastructure.Repositories.Abstractions;
 
 namespace TKT.Infrastructure.Repositories;
